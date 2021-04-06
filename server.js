@@ -6,6 +6,10 @@ import connectDB from "./config/db.js";
 import dotenv from "dotenv";
 import passport from "passport";
 import flash from "express-flash";
+import session from "express-session";
+
+// Routes
+import userRoutes from "./routes/userRoutes.js";
 
 dotenv.config();
 
@@ -26,6 +30,8 @@ app.use(
 );
 app.use(passport.initialize());
 app.use(passport.session());
+
+app.use("/", userRoutes);
 
 app.get("/", async (req, res) => {
   const articles = await Article.find().sort({ createdAt: "desc" });

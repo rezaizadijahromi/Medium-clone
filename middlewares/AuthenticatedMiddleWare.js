@@ -13,4 +13,4 @@ function checkNotAuthenticated(req, res, next) {
   next();
 }
 
-export { checkAuthenticated };
+export { checkAuthenticated, checkNotAuthenticated };
