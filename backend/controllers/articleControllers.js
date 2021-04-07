@@ -92,4 +92,34 @@ const getArticleById = asyncHandler(async (req, res) => {
   }
 });
 
-export { addArticle, getAllArticles, getArticleById };
+const addClap = asyncHandler(async (req, res) => {
+  const article = await Article.findById(req.params.id);
+  if (article) {
+    console.log(article);
+    await article.clap();
+    res.json(article);
+  } else {
+    res.status(404);
+    throw new Error("Article not found");
+  }
+});
+
+const addComment = asyncHandler(async (req, res) => {
+  const article = await Article.findById(req.params.id);
+
+  if (article) {
+    const commentObj = {
+      text: req.body.text,
+    };
+
+    console.log(article);
+    article.comments.push(commentObj);
+    await article.save();
+    res.status(201).json({ message: "comment added" });
+  } else {
+    res.status(404);
+    throw new Error("Article not found");
+  }
+});
+
+export { addArticle, getAllArticles, getArticleById, addClap, addComment };

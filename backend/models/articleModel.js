@@ -7,7 +7,7 @@ import mongoosePaginate from "mongoose-paginate-v2";
 
 const dompurify = createDomPurify(new JSDOM().window);
 
-let ArticleSchema = new mongoose.Schema({
+const ArticleSchema = mongoose.Schema({
   text: String,
   title: String,
   description: String,
@@ -19,24 +19,24 @@ let ArticleSchema = new mongoose.Schema({
   },
   comments: [
     {
-      author: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-      },
       text: String,
+      // author: {
+      //   type: mongoose.Schema.Types.ObjectId,
+      //   ref: "User",
+      // },
     },
   ],
 });
 
 ArticleSchema.methods.clap = function () {
-  this.clap++;
+  this.claps += 1;
   return this.save();
 };
 
-ArticleSchema.methods.comment = function (c) {
-  this.comments.push(c);
-  return this.save();
-};
+// ArticleSchema.methods.comment = function (c) {
+//   this.comments.push(c);
+//   return this.save();
+// };
 
 ArticleSchema.methods.addAuthor = function (author_id) {
   this.author = author_id;
