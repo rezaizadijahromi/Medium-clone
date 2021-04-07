@@ -67,4 +67,29 @@ const addArticle = asyncHandler(async (req, res) => {
   }
 });
 
-export default addArticle;
+const getAllArticles = asyncHandler(async (req, res) => {
+  const article = await Article.find({});
+
+  if (article.length > 0) {
+    res.json(article);
+  } else {
+    res.status(404);
+    throw new Error("No article found");
+  }
+  res.json(article);
+});
+
+const getArticleById = asyncHandler(async (req, res) => {
+  const article = await Article.findById(req.params.id).populate(
+    "author comments.author",
+  );
+
+  if (article) {
+    res.json(article);
+  } else {
+    res.status(404);
+    throw new Error("Article not found");
+  }
+});
+
+export { addArticle, getAllArticles, getArticleById };
