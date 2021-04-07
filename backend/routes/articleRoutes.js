@@ -6,6 +6,6 @@ import express from "express";
 
 const router = express.Router();
 
-router.route("/article").post(multipartWare, addArticle);
+router.route("/add").post(multipartWare, addArticle);
 
 export default router;
