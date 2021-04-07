@@ -1,4 +1,4 @@
-import mongoose, { mongo } from "mongoose";
+import mongoose from "mongoose";
 import marked from "marked";
 import slugify from "slugify";
 import createDomPurify from "dompurify";
@@ -33,7 +33,7 @@ ArticleSchema.methods.clap = function () {
   return this.save();
 };
 
-ArticleSchema.methods.comments = function (c) {
+ArticleSchema.methods.comment = function (c) {
   this.comments.push(c);
   return this.save();
 };
