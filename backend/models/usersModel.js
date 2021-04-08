@@ -4,20 +4,29 @@ import bcrypt from "bcryptjs";
 let UserSchema = new mongoose.Schema({
   name: String,
   email: String,
+  password: String,
   provider: String,
   provider_id: String,
   token: String,
   provider_pic: String,
+  idAdmin: {
+    type: Boolean,
+    default: false,
+  },
   followers: [
     {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
     },
   ],
   following: [
     {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
     },
   ],
 });
@@ -33,13 +42,13 @@ UserSchema.methods.addFollower = async function (fs) {
   this.followers.push(fs);
 };
 
-// userSchema.pre("save", async function (next) {
-//   if (!this.isModified("password")) {
-//     next();
-//   }
-//   const salt = await bcrypt.genSalt(10);
-//   this.password = await bcrypt.hash(this.password, salt);
-// });
+UserSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) {
+    next();
+  }
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+});
 
 const User = mongoose.model("User", UserSchema);
 export default User;

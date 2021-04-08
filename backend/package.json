@@ -23,6 +23,7 @@
     "express-flash": "0.0.2",
     "express-session": "^1.17.1",
     "jsdom": "^16.5.2",
+    "jsonwebtoken": "^8.5.1",
     "marked": "^2.0.1",
     "method-override": "^3.0.0",
     "mongoose": "^5.12.3",

@@ -1,5 +1,6 @@
 import express from "express";
 import articleRoutes from "./routes/articleRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
 import connectDB from "./config/db.js";
 import dotenv from "dotenv";
 import { notFound, errorHandler } from "./middlewares/errorMiddleWare.js";
@@ -13,6 +14,7 @@ app.use(express.json());
 
 //routers//
 app.use("/api/articles", articleRoutes);
+app.use("/api/users", userRoutes);
 
 // MiddleWares
 app.use(notFound);
