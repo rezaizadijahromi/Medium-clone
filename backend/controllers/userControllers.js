@@ -4,7 +4,10 @@ import User from "../models/usersModel.js";
 import bcrypt from "bcryptjs";
 import { generateToken, generateConfirmation } from "../utils/generateToken.js";
 
-//add user
+// @desc Register a new user
+// @route POST /api/users
+// @access Public
+
 const registerUser = asyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
   const alreadyExists = await User.findOne({ email });
@@ -33,7 +36,11 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new Error("Bad data");
   }
 });
-//login user
+
+// @desc Login in get token
+// @route POST /api/users/login
+// @access Public
+
 const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
@@ -52,9 +59,14 @@ const loginUser = asyncHandler(async (req, res) => {
   }
 });
 
-//get user
-const getUser = asyncHandler(async (req, res) => {
-  const user = awaitUser.findById(req.user._id);
+// @desc Get users id for going into their profile
+// @route /api/users/profile/:id
+// @access Public
+const getUserInfo = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id).populate(
+    "user",
+    "followers following",
+  );
   if (user) {
     res.json(user);
   } else {
@@ -63,10 +75,12 @@ const getUser = asyncHandler(async (req, res) => {
   }
 });
 
-//follow user
+// @desc Follow the user and when you follow user adds into your following and adds into that user followers
+// @route /api/users/follow/:id
+// @access Private
 const followUser = asyncHandler(async (req, res) => {
   const user = await User.findById(req.params.id);
-  // const userr = await User.findById(req.user._id);
+  const userOwn = await User.findById(req.user._id);
 
   // console.log(req.user._id);
   // console.log(req.params.id);
@@ -85,9 +99,15 @@ const followUser = asyncHandler(async (req, res) => {
       throw new Error("Already follow this user");
     }
     const follower = {
+      user: req.user._id,
+    };
+    const following = {
       user: req.params.id,
     };
+    userOwn.following.push(following);
     user.followers.push(follower);
+
+    await userOwn.save();
     await user.save();
     res.json("done");
   } else {
@@ -96,9 +116,13 @@ const followUser = asyncHandler(async (req, res) => {
   }
 });
 
-// get user profile
+// @desc Get user profile
+// @route GET /api/users/profile
+// @access Private
+
 const getUserProfile = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id).populate(
+    "user",
     "following followers",
   );
   if (user) {
@@ -109,4 +133,4 @@ const getUserProfile = asyncHandler(async (req, res) => {
   }
 });
 
-export { registerUser, loginUser, followUser, getUserProfile, getUser };
+export { registerUser, loginUser, followUser, getUserProfile, getUserInfo };
