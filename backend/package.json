@@ -5,7 +5,13 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "server": "nodemon server.js"
+    "start": "node backend/server",
+    "server": "nodemon backend/server",
+    "client": "cd ../frontend && npm start",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "data:import": "node backend/seeder",
+    "data:destroy": "node backend/seeder -d",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix frontend && npm run build --prefix frontend"
   },
   "keywords": [],
   "author": "",
@@ -33,6 +39,7 @@
     "slugify": "^1.5.0"
   },
   "devDependencies": {
+    "concurrently": "^6.0.1",
     "nodemon": "^2.0.7"
   }
 }
