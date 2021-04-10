@@ -116,6 +116,33 @@ const followUser = asyncHandler(async (req, res) => {
   }
 });
 
+const unfollowUser = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id);
+  const userOwn = await User.findById(req.user._id);
+
+  if (user) {
+    const alreadyFollowed = userOwn.following.find(
+      (r) => r.user.toString() === req.params.id.toString(),
+    );
+
+    if (alreadyFollowed) {
+      userOwn.following.remove(req.params.id);
+      user.followers.remove(req.user._id);
+
+      await user.save();
+      await userOwn.save();
+
+      res.json("unfollow");
+    } else {
+      res.status(400);
+      throw new Error("You dont follow this user");
+    }
+  } else {
+    res.status(404);
+    throw new Error("User not found");
+  }
+});
+
 // @desc Get user profile
 // @route GET /api/users/profile
 // @access Private
@@ -133,4 +160,11 @@ const getUserProfile = asyncHandler(async (req, res) => {
   }
 });
 
-export { registerUser, loginUser, followUser, getUserProfile, getUserInfo };
+export {
+  registerUser,
+  loginUser,
+  followUser,
+  getUserProfile,
+  getUserInfo,
+  unfollowUser,
+};

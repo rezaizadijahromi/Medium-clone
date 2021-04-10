@@ -30,16 +30,23 @@ let UserSchema = new mongoose.Schema({
     },
   ],
 });
-
-UserSchema.methods.follow = async function (user_id) {
-  if (this.following.indexOf(user_id) === -1) {
-    this.following.push(user_id);
+UserSchema.methods.follow = function (id) {
+  if (this.following.indexOf(id) === -1) {
+    this.following.push(id);
   }
-  return await this.save();
+
+  return this.save();
 };
 
-UserSchema.methods.addFollower = async function (fs) {
-  this.followers.push(fs);
+UserSchema.methods.unfollow = function (id) {
+  this.following.remove(id);
+  return this.save();
+};
+
+UserSchema.methods.isFollowing = function (id) {
+  return this.following.some(function (followId) {
+    return followId.toString() === id.toString();
+  });
 };
 
 UserSchema.pre("save", async function (next) {
