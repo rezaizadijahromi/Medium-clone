@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { Row, Col, Card } from "react-bootstrap";
+import { Row, Col, Card, Container } from "react-bootstrap";
 import Message from "../components/Message";
 import Loader from "../components/Loader";
 import { listArticle } from "../actions/articleActions";
@@ -18,34 +18,36 @@ const Article = ({ article }) => {
 
   return (
     <>
-      <h1>Latest Articles</h1>
-      {loading ? (
-        <Loader />
-      ) : error ? (
-        <Message variant="danger">{error}</Message>
-      ) : (
-        <>
-          <Col>
-            {articles.map((article) => (
-              <Card className="my-3 p-3 rounded">
-                <Link to={`/article/${article._id}`}>
-                  <Card.Img src={article.image} variant="top"></Card.Img>
-                </Link>
-
-                <Card.Body>
+      <Container>
+        <h1>Latest Articles</h1>
+        {loading ? (
+          <Loader />
+        ) : error ? (
+          <Message variant="danger">{error}</Message>
+        ) : (
+          <>
+            <Col>
+              {articles.map((article) => (
+                <Card className="my-3 p-3 rounded">
                   <Link to={`/article/${article._id}`}>
-                    <Card.Title as="div">
-                      <strong>{article.title}</strong>
-                    </Card.Title>
+                    <Card.Img src={article.image} variant="top"></Card.Img>
                   </Link>
-                </Card.Body>
 
-                <Card.Text as="div">{article.text}</Card.Text>
-              </Card>
-            ))}
-          </Col>
-        </>
-      )}
+                  <Card.Body>
+                    <Link to={`/article/${article._id}`}>
+                      <Card.Title as="div">
+                        <strong>{article.title}</strong>
+                      </Card.Title>
+                    </Link>
+                  </Card.Body>
+
+                  <Card.Text as="div">{article.text}</Card.Text>
+                </Card>
+              ))}
+            </Col>
+          </>
+        )}
+      </Container>
     </>
   );
 };

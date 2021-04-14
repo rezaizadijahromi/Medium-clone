@@ -8,12 +8,40 @@ import {
   articleClapReducer,
 } from "./reducers/articlesReducer";
 
+import {
+  userLoginReducer,
+  userProfileReducer,
+  userRegisterReducer,
+  userListReducer,
+  userDeleteReducer,
+  userUpdateProfileReducer,
+  userUpdateReducer,
+  userFollowerListReducer,
+  userFollowerReducer,
+} from "./reducers/userReducer";
+
 const reducer = combineReducers({
   articleList: articleListReducer,
   articleDetail: articleDetailReducer,
   articleClap: articleClapReducer,
+  userLogin: userLoginReducer,
+  userProfile: userProfileReducer,
+  userRegister: userRegisterReducer,
+  userList: userListReducer,
+  userDelete: userDeleteReducer,
+  userUpdateProfile: userUpdateProfileReducer,
+  userUpdate: userUpdateReducer,
+  userFollower: userFollowerReducer,
+  userFollowerList: userFollowerListReducer,
 });
-const initialState = {};
+
+const userInfoFromStorage = localStorage.getItem("userInfo")
+  ? JSON.parse(localStorage.getItem("userInfo"))
+  : null;
+
+const initialState = {
+  userLogin: { userInfo: userInfoFromStorage },
+};
 
 const middleware = [thunk];
 const store = createStore(
