@@ -14,8 +14,10 @@ const ArticleSchema = mongoose.Schema({
   feature_img: String,
   claps: Number,
   author: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
   },
   comments: [
     {
