@@ -1,10 +1,10 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { Row, Col, Card } from "react-bootstrap";
+import { Row, Col, Card, Container, Button } from "react-bootstrap";
 import Message from "../components/Message";
 import Loader from "../components/Loader";
-import { detailArticle } from "../actions/articleActions";
+import { detailArticle, clapArticle } from "../actions/articleActions";
 
 const ArtcileDetail = ({ match }) => {
   const dispatch = useDispatch();
@@ -12,11 +12,25 @@ const ArtcileDetail = ({ match }) => {
   const articleDetail = useSelector((state) => state.articleDetail);
   const { loading, article, error } = articleDetail;
 
+  const articleClap = useSelector((state) => state.articleClap);
+  const {
+    loading: clapLoading,
+    error: clapError,
+    success: clapSuccess,
+  } = articleClap;
+
+  const [clap, setClap] = useState(article.claps);
+
   useEffect(() => {
     if (article._id || !article._id !== match.params.id) {
       dispatch(detailArticle(match.params.id));
     }
-  }, [match, article._id, dispatch]);
+  }, [match, article._id, dispatch, clapSuccess]);
+
+  const clapHandler = (e) => {
+    e.preventDefault();
+    dispatch(clapArticle(match.params.id));
+  };
 
   // follow function
 
@@ -34,13 +48,22 @@ const ArtcileDetail = ({ match }) => {
         <Message variant="danger">{error}</Message>
       ) : (
         <>
-          <Card>
-            <Card.Img variant="top" src={article.feature_img} />
-            <Card.Body>
-              <Card.Title>{article.title}</Card.Title>
-              <Card.Text>{article.description}</Card.Text>
-            </Card.Body>
-          </Card>
+          <Container>
+            <Col md={20}>
+              <Card>
+                <Card.Img variant="top" src={article.feature_img} />
+                <Card.Body>
+                  <Card.Title>{article.title}</Card.Title>
+                  <Card.Text>{article.description}</Card.Text>
+                </Card.Body>
+              </Card>
+            </Col>
+            <Col md={6}>
+              <Button onClick={clapHandler}>
+                <i class="far fa-thumbs-up">{article.claps}</i>
+              </Button>
+            </Col>
+          </Container>
         </>
       )}
     </>

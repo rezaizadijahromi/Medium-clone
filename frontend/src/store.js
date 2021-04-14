@@ -5,11 +5,13 @@ import { composeWithDevTools } from "redux-devtools-extension";
 import {
   articleListReducer,
   articleDetailReducer,
+  articleClapReducer,
 } from "./reducers/articlesReducer";
 
 const reducer = combineReducers({
   articleList: articleListReducer,
   articleDetail: articleDetailReducer,
+  articleClap: articleClapReducer,
 });
 const initialState = {};
 

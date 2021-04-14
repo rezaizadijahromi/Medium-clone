@@ -11,10 +11,10 @@ const App = () => {
     <Router>
       <Header />
       <main className="py-3">
-        <Container>
-          <Route path="/" component={Article} exact />
-          <Route path="/article/:id" component={ArtcileDetail} />
-        </Container>
+        <Route path="/" component={Article} exact />
+        <Route path="/article/:id" component={ArtcileDetail} />
+        {/* <Container>
+        </Container> */}
       </main>
       <Footer />
     </Router>

@@ -7,6 +7,9 @@ import {
   ARTICLE_DETAILS_REQUEST,
   ARTICLE_DETAILS_SUCCESS,
   ARTICLE_DETAILS_FAIL,
+  ARTICLE_CLAP_REQUEST,
+  ARTICLE_CLAP_SUCCESS,
+  ARTICLE_CLAP_FAIL,
 } from "../constants/articleConstats";
 
 export const listArticle = () => async (dispatch) => {
@@ -37,6 +40,24 @@ export const detailArticle = (id) => async (dispatch) => {
   } catch (error) {
     dispatch({
       type: ARTICLE_DETAILS_FAIL,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    });
+  }
+};
+
+export const clapArticle = (id) => async (dispatch) => {
+  try {
+    dispatch({ type: ARTICLE_CLAP_REQUEST });
+
+    const { data } = await axios.post(`/api/articles/${id}/clap`);
+
+    dispatch({ type: ARTICLE_CLAP_SUCCESS, payload: data });
+  } catch (error) {
+    dispatch({
+      type: ARTICLE_CLAP_FAIL,
       payload:
         error.response && error.response.data.message
           ? error.response.data.message
