@@ -160,6 +160,25 @@ const getUserProfile = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc Put user profile
+// @route PUT /api/users/profile
+// @access Private
+
+const updateUserProfile = asyncHandler(async (req, res) => {
+  const { name, email, password } = req.body;
+  const user = await User.findById(req.user._id);
+
+  if (user) {
+    user.name = name || user.name;
+    user.email = email || user.email;
+    user.password = password || user.password;
+  }
+
+  const userUpdated = await user.save();
+
+  res.json(userUpdated);
+});
+
 export {
   registerUser,
   loginUser,
@@ -167,4 +186,5 @@ export {
   getUserProfile,
   getUserInfo,
   unfollowUser,
+  updateUserProfile,
 };
