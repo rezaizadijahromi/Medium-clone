@@ -92,6 +92,25 @@ const getArticleById = asyncHandler(async (req, res) => {
   }
 });
 
+const updateArticle = asyncHandler(async (req, res) => {
+  const { title, text, claps, description, feature_img } = req.body;
+  const article = await Article.findById(req.params.id);
+
+  if (article) {
+    article.title = title || article.title;
+    article.text = text || article.text;
+    article.description = description || article.description;
+    article.feature_img = feature_img || article.feature_img;
+  } else {
+    res.status(404);
+    throw new Error("Article not found");
+  }
+
+  const articleUpdated = await article.save();
+
+  res.json(articleUpdated);
+});
+
 const addClap = asyncHandler(async (req, res) => {
   const article = await Article.findById(req.params.id);
   if (article) {
@@ -122,4 +141,11 @@ const addComment = asyncHandler(async (req, res) => {
   }
 });
 
-export { addArticle, getAllArticles, getArticleById, addClap, addComment };
+export {
+  addArticle,
+  getAllArticles,
+  getArticleById,
+  addClap,
+  addComment,
+  updateArticle,
+};
