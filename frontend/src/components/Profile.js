@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import FollowCM from "./FollowCM";
 import {
   Table,
   Form,
@@ -8,6 +9,7 @@ import {
   Container,
   Dropdown,
 } from "react-bootstrap";
+import axios from "axios";
 import { LinkContainer } from "react-router-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import Message from "../components/Message";
@@ -31,16 +33,14 @@ const Profile = ({ location, history }) => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState("");
+  const [image, setImage] = useState("");
+  const [uploading, setUploading] = useState(false);
 
   const dispatch = useDispatch();
 
   const userUpdateProfile = useSelector((state) => state.userUpdateProfile);
 
   const { success } = userUpdateProfile;
-
-  // list order section
-
-  // end
 
   useEffect(() => {
     if (!userInfo) {
@@ -52,6 +52,7 @@ const Profile = ({ location, history }) => {
       } else {
         setName(user.name);
         setEmail(user.email);
+        setImage(user.image);
       }
     }
   }, [dispatch, history, userInfo, user, success]);
@@ -61,7 +62,29 @@ const Profile = ({ location, history }) => {
     if (password !== confirmPassword) {
       setMessage("Passwords do not match");
     } else {
-      dispatch(updateUserProfile({ id: user._id, name, email, password }));
+      dispatch(
+        updateUserProfile({ id: user._id, name, email, password, image }),
+      );
+    }
+  };
+
+  const uploadFileHandler = async (e) => {
+    const file = e.target.files[0];
+    const formData = new FormData();
+    formData.append("image", file);
+    setUploading(true);
+    try {
+      const config = {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      };
+      const { data } = await axios.post("/api/upload", formData, config);
+      setImage(data);
+      setUploading(false);
+    } catch (error) {
+      console.error(error);
+      setUploading(false);
     }
   };
 
@@ -70,111 +93,131 @@ const Profile = ({ location, history }) => {
   };
 
   return (
-    <Row>
-      <Col md={3}>
-        <Container>
-          <h2>User Profile</h2>
-          {message && <Message variant="danger">{message}</Message>}
-          {}
-          {success && <Message variant="success">Profile Updated</Message>}
-          {loading ? (
-            <Loader />
-          ) : error ? (
-            <Message variant="danger">{error}</Message>
-          ) : (
-            <Form onSubmit={submitHandler}>
-              <Form.Group controlId="name">
-                <Form.Label>Name</Form.Label>
-                <Form.Control
-                  type="name"
-                  placeholder="Enter name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}></Form.Control>
-              </Form.Group>
+    <Container>
+      <Col>
+        <h2>User Profile</h2>
+        {message && <Message variant="danger">{message}</Message>}
+        {}
+        {success && <Message variant="success">Profile Updated</Message>}
+        {loading ? (
+          <Loader />
+        ) : error ? (
+          <Message variant="danger">{error}</Message>
+        ) : (
+          <Form onSubmit={submitHandler}>
+            <Row>
+              <Col>
+                <Dropdown>
+                  <Dropdown.Toggle variant="success" id="dropdown-basic">
+                    Followers
+                  </Dropdown.Toggle>
 
-              <Form.Group controlId="email">
-                <Form.Label>Email Address</Form.Label>
-                <Form.Control
-                  type="email"
-                  placeholder="Enter email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}></Form.Control>
-              </Form.Group>
+                  <Dropdown.Menu>
+                    {user.followers.map((userFollowers) => {
+                      return (
+                        <LinkContainer to={`profile/${userFollowers.user}`}>
+                          <Dropdown.Item key={userFollowers.user}>
+                            <Button
+                              onClick={() =>
+                                userProfileHandler(userFollowers.user)
+                              }>
+                              {userFollowers.name}
+                            </Button>
+                          </Dropdown.Item>
+                        </LinkContainer>
+                      );
+                    })}
+                  </Dropdown.Menu>
+                </Dropdown>
+              </Col>
+              <Col>
+                <Dropdown>
+                  <Dropdown.Toggle variant="success" id="dropdown-basic">
+                    Following
+                  </Dropdown.Toggle>
 
-              <Form.Group controlId="password">
-                <Form.Label>Password</Form.Label>
-                <Form.Control
-                  type="password"
-                  placeholder="Enter password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}></Form.Control>
-              </Form.Group>
+                  <Dropdown.Menu>
+                    {user.following.map((userFollowing) => {
+                      return (
+                        <LinkContainer to={`profile/${userFollowing.user}`}>
+                          <Dropdown.Item key={userFollowing.user}>
+                            <Button
+                              onClick={() =>
+                                userProfileHandler(userFollowing.user)
+                              }>
+                              {userFollowing.name}
+                            </Button>
+                          </Dropdown.Item>
+                        </LinkContainer>
+                      );
+                    })}
+                  </Dropdown.Menu>
+                </Dropdown>
+              </Col>
+            </Row>
 
-              <Form.Group controlId="confirmPassword">
-                <Form.Label>Confirm Password</Form.Label>
-                <Form.Control
-                  type="password"
-                  placeholder="Confirm password"
-                  value={confirmPassword}
-                  onChange={(e) =>
-                    setConfirmPassword(e.target.value)
-                  }></Form.Control>
-              </Form.Group>
+            <FollowCM image={image} />
 
-              <Button type="submit" variant="primary">
-                Update
-              </Button>
-            </Form>
-          )}
-        </Container>
+            <Form.Group controlId="name">
+              <Form.Label>Name</Form.Label>
+              <Form.Control
+                type="name"
+                placeholder="Enter name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}></Form.Control>
+            </Form.Group>
+
+            <Form.Group controlId="email">
+              <Form.Label>Email Address</Form.Label>
+              <Form.Control
+                type="email"
+                placeholder="Enter email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}></Form.Control>
+            </Form.Group>
+
+            <Form.Group controlId="password">
+              <Form.Label>Password</Form.Label>
+              <Form.Control
+                type="password"
+                placeholder="Enter password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}></Form.Control>
+            </Form.Group>
+
+            <Form.Group controlId="confirmPassword">
+              <Form.Label>Confirm Password</Form.Label>
+              <Form.Control
+                type="password"
+                placeholder="Confirm password"
+                value={confirmPassword}
+                onChange={(e) =>
+                  setConfirmPassword(e.target.value)
+                }></Form.Control>
+            </Form.Group>
+
+            <Form.Group controlId="image">
+              <Form.Label>Image</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter image url"
+                value={image}
+                onChange={(e) => setImage(e.target.value)}></Form.Control>
+              <Form.File
+                id="image-file"
+                label="Choose File"
+                custom
+                onChange={uploadFileHandler}></Form.File>
+              {uploading && <Loader />}
+            </Form.Group>
+
+            <Button type="submit" variant="primary">
+              Update
+            </Button>
+          </Form>
+        )}
       </Col>
-
-      <Col md={3}>
-        <Dropdown>
-          <Dropdown.Toggle variant="success" id="dropdown-basic">
-            Following
-          </Dropdown.Toggle>
-
-          <Dropdown.Menu>
-            {user.following.map((userFollowing) => {
-              return (
-                <LinkContainer to={`profile/${userFollowing.user}`}>
-                  <Dropdown.Item key={userFollowing.user}>
-                    <Button
-                      onClick={() => userProfileHandler(userFollowing.user)}>
-                      {userFollowing.name}
-                    </Button>
-                  </Dropdown.Item>
-                </LinkContainer>
-              );
-            })}
-          </Dropdown.Menu>
-        </Dropdown>
-      </Col>
-
-      <Col md={3}>
-        <Dropdown>
-          <Dropdown.Toggle variant="success" id="dropdown-basic">
-            Followers
-          </Dropdown.Toggle>
-
-          <Dropdown.Menu>
-            {user.followers.map((userFollowers) => {
-              return (
-                <LinkContainer to={`profile/${userFollowers.user}`}>
-                  <Dropdown.Item key={userFollowers.user}>
-                    <Button
-                      onClick={() => userProfileHandler(userFollowers.user)}>
-                      {userFollowers.name}
-                    </Button>
-                  </Dropdown.Item>
-                </LinkContainer>
-              );
-            })}
-          </Dropdown.Menu>
-        </Dropdown>
-      </Col>
-    </Row>
+    </Container>
   );
 };
 

@@ -1,20 +1,12 @@
 import React, { useState, useEffect } from "react";
-import {
-  Table,
-  Form,
-  Button,
-  Row,
-  Col,
-  Container,
-  Dropdown,
-} from "react-bootstrap";
+import FollowCM from "./FollowCM";
+import { Form, Button, Row, Col, Container, Dropdown } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import Message from "../components/Message";
 import Loader from "../components/Loader";
 
-import { getUserProfile, updateUserProfile } from "../actions/userActions";
-import { USER_UPDATE_PROFILE_RESET } from "../constants/userConstants";
+import { getUserProfile } from "../actions/userActions";
 
 // we need to list user orders
 
@@ -28,8 +20,8 @@ const ProfileUser = ({ location, history, match }) => {
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const [image, setImage] = useState("");
   const [message, setMessage] = useState("");
 
   const dispatch = useDispatch();
@@ -44,28 +36,18 @@ const ProfileUser = ({ location, history, match }) => {
     } else {
       setName(user.name);
       setEmail(user.email);
+      setImage(user.image);
     }
   }, [dispatch, history, userInfo, user, success, match]);
-
-  // Note new Feature if the user change anything they should logout and then login again
-
-  const submitHandler = (e) => {
-    e.preventDefault();
-    if (password !== confirmPassword) {
-      setMessage("Passwords do not match");
-    } else {
-      dispatch(updateUserProfile({ id: user._id, name, email, password }));
-    }
-  };
 
   const userProfileHandler = (userId) => {
     dispatch(getUserProfile(userId));
   };
 
   return (
-    <Row>
-      <Col md={3}>
-        <Container>
+    <Container>
+      <Row>
+        <Col>
           <h2>User Profile</h2>
           {message && <Message variant="danger">{message}</Message>}
           {}
@@ -75,7 +57,60 @@ const ProfileUser = ({ location, history, match }) => {
           ) : error ? (
             <Message variant="danger">{error}</Message>
           ) : (
-            <Form onSubmit={submitHandler}>
+            <Form>
+              <Row>
+                <Col>
+                  <Dropdown>
+                    <Dropdown.Toggle variant="success" id="dropdown-basic">
+                      Followers
+                    </Dropdown.Toggle>
+
+                    <Dropdown.Menu>
+                      {user.followers.map((userFollowers) => {
+                        return (
+                          <LinkContainer to={`${userFollowers.user}`}>
+                            <Dropdown.Item key={userFollowers.user}>
+                              <Button
+                                onClick={() =>
+                                  userProfileHandler(userFollowers.user)
+                                }>
+                                {userFollowers.name}
+                              </Button>
+                            </Dropdown.Item>
+                          </LinkContainer>
+                        );
+                      })}
+                    </Dropdown.Menu>
+                  </Dropdown>
+                </Col>
+                <Col>
+                  <Dropdown>
+                    <Dropdown.Toggle variant="success" id="dropdown-basic">
+                      Following
+                    </Dropdown.Toggle>
+
+                    <Dropdown.Menu>
+                      {user.following.map((userFollowing) => {
+                        return (
+                          <LinkContainer to={`${userFollowing.user}`}>
+                            <Dropdown.Item key={userFollowing.user}>
+                              <Button
+                                onClick={() =>
+                                  userProfileHandler(userFollowing.user)
+                                }>
+                                {userFollowing.name}
+                              </Button>
+                            </Dropdown.Item>
+                          </LinkContainer>
+                        );
+                      })}
+                    </Dropdown.Menu>
+                  </Dropdown>
+                </Col>
+              </Row>
+
+              <FollowCM image={image} />
+
               <Form.Group controlId="name">
                 <Form.Label>Name</Form.Label>
                 <Form.Control
@@ -93,81 +128,11 @@ const ProfileUser = ({ location, history, match }) => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}></Form.Control>
               </Form.Group>
-
-              <Form.Group controlId="password">
-                <Form.Label>Password</Form.Label>
-                <Form.Control
-                  type="password"
-                  placeholder="Enter password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}></Form.Control>
-              </Form.Group>
-
-              <Form.Group controlId="confirmPassword">
-                <Form.Label>Confirm Password</Form.Label>
-                <Form.Control
-                  type="password"
-                  placeholder="Confirm password"
-                  value={confirmPassword}
-                  onChange={(e) =>
-                    setConfirmPassword(e.target.value)
-                  }></Form.Control>
-              </Form.Group>
-
-              <Button type="submit" variant="primary">
-                Update
-              </Button>
             </Form>
           )}
-        </Container>
-      </Col>
-
-      <Col md={3}>
-        <Dropdown>
-          <Dropdown.Toggle variant="success" id="dropdown-basic">
-            Following
-          </Dropdown.Toggle>
-
-          <Dropdown.Menu>
-            {user.following.map((userFollowing) => {
-              return (
-                <LinkContainer to={`${userFollowing.user}`}>
-                  <Dropdown.Item key={userFollowing.user}>
-                    <Button
-                      onClick={() => userProfileHandler(userFollowing.user)}>
-                      {userFollowing.name}
-                    </Button>
-                  </Dropdown.Item>
-                </LinkContainer>
-              );
-            })}
-          </Dropdown.Menu>
-        </Dropdown>
-      </Col>
-
-      <Col md={3}>
-        <Dropdown>
-          <Dropdown.Toggle variant="success" id="dropdown-basic">
-            Followers
-          </Dropdown.Toggle>
-
-          <Dropdown.Menu>
-            {user.followers.map((userFollowers) => {
-              return (
-                <LinkContainer to={`${userFollowers.user}`}>
-                  <Dropdown.Item key={userFollowers.user}>
-                    <Button
-                      onClick={() => userProfileHandler(userFollowers.user)}>
-                      {userFollowers.name}
-                    </Button>
-                  </Dropdown.Item>
-                </LinkContainer>
-              );
-            })}
-          </Dropdown.Menu>
-        </Dropdown>
-      </Col>
-    </Row>
+        </Col>
+      </Row>
+    </Container>
   );
 };
 
