@@ -168,13 +168,14 @@ const getUserProfile = asyncHandler(async (req, res) => {
 // @access Private
 
 const updateUserProfile = asyncHandler(async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, image } = req.body;
   const user = await User.findById(req.user._id);
 
   if (user) {
     user.name = name || user.name;
     user.email = email || user.email;
     user.password = password || user.password;
+    user.image = image || user.image;
   }
 
   const userUpdated = await user.save();
