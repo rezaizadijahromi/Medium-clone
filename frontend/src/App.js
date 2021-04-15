@@ -7,6 +7,8 @@ import Login from "./components/Login";
 import Register from "./components/Register";
 import Article from "./components/Article";
 import ArtcileDetail from "./components/ArtcileDetail";
+import Profile from "./components/Profile";
+import ProfileUser from "./components/ProfileUser";
 
 const App = () => {
   return (
@@ -17,6 +19,9 @@ const App = () => {
         <Route path="/register" component={Register} />
         <Route path="/" component={Article} exact />
         <Route path="/article/:id" component={ArtcileDetail} />
+        <Route path="/profile" component={Profile} exact />
+        <Route path="/profile/:id" component={ProfileUser} exact />
+
         {/* <Container>
         </Container> */}
       </main>

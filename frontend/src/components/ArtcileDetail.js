@@ -19,8 +19,6 @@ const ArtcileDetail = ({ match }) => {
     success: clapSuccess,
   } = articleClap;
 
-  const [clap, setClap] = useState(article.claps);
-
   useEffect(() => {
     if (article._id || !article._id !== match.params.id) {
       dispatch(detailArticle(match.params.id));

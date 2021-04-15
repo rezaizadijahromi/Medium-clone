@@ -149,7 +149,7 @@ export const userFollowerListReducer = (state = { followers: [] }, action) => {
   }
 };
 
-export const userFollowerReducer = (state = { followed: {} }, action) => {
+export const userFollowerReducer = (state = { followed: [] }, action) => {
   switch (action.type) {
     case USER_FOLLOW_REQUEST:
       return { loading: false };
