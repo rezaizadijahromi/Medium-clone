@@ -19,7 +19,7 @@ router
   .route("/profile")
   .get(protect, getUserProfile)
   .put(protect, updateUserProfile);
-router.route("/profile/:id").get(getUserInfo);
+router.route("/:id").get(getUserInfo);
 router
   .route("/follow/:id")
   .post(protect, followUser)

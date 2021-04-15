@@ -1,34 +1,50 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 
+const FollowingSchema = mongoose.Schema(
+  {
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "User",
+    },
+    name: {
+      type: String,
+    },
+  },
+  {
+    timestamps: true,
+  },
+);
+
+const FollowersSchema = mongoose.Schema(
+  {
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "User",
+    },
+    name: {
+      type: String,
+    },
+  },
+  {
+    timestamps: true,
+  },
+);
+
 let UserSchema = new mongoose.Schema({
   name: String,
   email: String,
   password: String,
-  provider: String,
-  provider_id: String,
   token: String,
-  provider_pic: String,
+  image: String,
   idAdmin: {
     type: Boolean,
     default: false,
   },
-  followers: [
-    {
-      user: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-      },
-    },
-  ],
-  following: [
-    {
-      user: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-      },
-    },
-  ],
+  followers: [FollowersSchema],
+  following: [FollowingSchema],
 });
 UserSchema.methods.follow = function (id) {
   if (this.following.indexOf(id) === -1) {
@@ -59,3 +75,10 @@ UserSchema.pre("save", async function (next) {
 
 const User = mongoose.model("User", UserSchema);
 export default User;
+
+// {
+//   user: {
+//     type: mongoose.Schema.Types.ObjectId,
+//     ref: "User",
+//   },
+// },
