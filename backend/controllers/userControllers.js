@@ -91,8 +91,9 @@ const followUser = asyncHandler(async (req, res) => {
   }
 
   if (user) {
-    const alreadyFollowed = userOwn.followers.find(
-      (r) => r.user.toString() === req.params.id.toString(),
+    const alreadyFollowed = userOwn.following.find(
+      (r) => r.user._id.toString() === req.params.id.toString(),
+      console.log(req.params.id),
     );
     if (alreadyFollowed) {
       res.status(400);
