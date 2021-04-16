@@ -125,12 +125,23 @@ const unfollowUser = asyncHandler(async (req, res) => {
 
   if (user) {
     const alreadyFollowed = userOwn.following.find(
-      (r) => r.user.toString() === req.params.id.toString(),
+      (r) => r.user._id.toString() === req.params.id.toString(),
     );
 
     if (alreadyFollowed) {
-      userOwn.following.remove(req.params.id);
-      user.followers.remove(req.user._id);
+      const delUser = await user.followers.find((usr) => {
+        return usr.user == userOwn.id;
+      });
+
+      console.log("del user ", delUser);
+
+      const delUserOwn = await userOwn.following.find((usr) => {
+        return usr.user == req.params.id;
+      });
+      console.log("del user own", delUserOwn);
+
+      await delUser.remove();
+      await delUserOwn.remove();
 
       await user.save();
       await userOwn.save();

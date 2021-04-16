@@ -16,6 +16,9 @@ import {
   USER_UPDATE_PROFILE_REQUEST,
   USER_FOLLOW_REQUEST,
   USER_FOLLOW_SUCCESS,
+  USER_UNFOLLOW_FAIL,
+  USER_UNFOLLOW_SUCCESS,
+  USER_UNFOLLOW_REQUEST,
 } from "../constants/userConstants";
 export const login = (email, password) => async (dispatch) => {
   try {
@@ -205,6 +208,39 @@ export const followUser = (id) => async (dispatch, getState) => {
     }
     dispatch({
       type: USER_PROFILE_FAIL,
+      payload: message,
+    });
+  }
+};
+
+export const UnfollowUser = (id) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: USER_UNFOLLOW_REQUEST });
+
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.delete(`/api/users/follow/${id}`, {}, config);
+
+    dispatch({ type: USER_UNFOLLOW_SUCCESS, payload: data });
+  } catch (error) {
+    const message =
+      error.response && error.response.data.message
+        ? error.response.data.message
+        : error.message;
+    if (message === "Not authorized, token failed") {
+      dispatch(logout());
+    }
+    dispatch({
+      type: USER_UNFOLLOW_FAIL,
       payload: message,
     });
   }

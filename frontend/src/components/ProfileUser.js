@@ -6,7 +6,11 @@ import { useSelector, useDispatch } from "react-redux";
 import Message from "../components/Message";
 import Loader from "../components/Loader";
 
-import { getUserProfile, followUser } from "../actions/userActions";
+import {
+  getUserProfile,
+  followUser,
+  UnfollowUser,
+} from "../actions/userActions";
 
 // we need to list user orders
 
@@ -32,6 +36,13 @@ const ProfileUser = ({ location, history, match }) => {
     success: followSuccess,
     error: followError,
   } = userFollow;
+
+  const userUnFollow = useSelector((state) => state.userUnFollower);
+  const {
+    loading: unFollowLoading,
+    success: unFollowSuccess,
+    error: unFollowError,
+  } = userUnFollow;
 
   const userUpdateProfile = useSelector((state) => state.userUpdateProfile);
 
@@ -67,7 +78,12 @@ const ProfileUser = ({ location, history, match }) => {
 
   const userFollowHandler = (userId) => {
     // e.preventDefault();
-    dispatch(followUser(userId));
+    if (followSuccess) {
+      dispatch(UnfollowUser(userId));
+      console.log(unFollowError);
+    } else {
+      dispatch(followUser(userId));
+    }
   };
 
   return (
@@ -92,7 +108,7 @@ const ProfileUser = ({ location, history, match }) => {
 
                   <Col>
                     <Button onClick={() => userFollowHandler(match.params.id)}>
-                      {!followSuccess ? "Follow" : "Unfollow"}
+                      {followSuccess ? "UnFollow" : "Follow"}
                     </Button>
                   </Col>
 

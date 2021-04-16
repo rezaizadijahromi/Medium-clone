@@ -151,3 +151,16 @@ export const userFollowerReducer = (
       return state;
   }
 };
+
+export const userUnFollowerReducer = (state = { user: {} }, action) => {
+  switch (action.type) {
+    case USER_FOLLOW_REQUEST:
+      return { loading: true };
+    case USER_FOLLOW_SUCCESS:
+      return { loading: false, success: true };
+    case USER_FOLLOW_FAIL:
+      return { loading: false, error: action.payload };
+    default:
+      return state;
+  }
+};
