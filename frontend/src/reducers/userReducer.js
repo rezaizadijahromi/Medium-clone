@@ -136,25 +136,15 @@ export const userUpdateReducer = (state = { user: {} }, action) => {
   }
 };
 
-export const userFollowerListReducer = (state = { followers: [] }, action) => {
-  switch (action.type) {
-    case USER_LIST_FOLLOW_REQUEST:
-      return { loading: false };
-    case USER_LIST_FOLLOW_SUCCESS:
-      return { loading: false, followers: action.payload };
-    case USER_LIST_FOLLOW_FAIL:
-      return { loading: false, error: action.payload };
-    default:
-      return state;
-  }
-};
-
-export const userFollowerReducer = (state = { followed: [] }, action) => {
+export const userFollowerReducer = (
+  state = { user: { success: false } },
+  action,
+) => {
   switch (action.type) {
     case USER_FOLLOW_REQUEST:
-      return { loading: false };
+      return { loading: true };
     case USER_FOLLOW_SUCCESS:
-      return { loading: false, followed: action.payload, success: true };
+      return { loading: false, success: true };
     case USER_FOLLOW_FAIL:
       return { loading: false, error: action.payload };
     default:

@@ -20,9 +20,6 @@ router
   .get(protect, getUserProfile)
   .put(protect, updateUserProfile);
 router.route("/:id").get(getUserInfo);
-router
-  .route("/follow/:id")
-  .post(protect, followUser)
-  .delete(protect, unfollowUser);
+router.route("/follow/:id").post(protect, followUser).delete(unfollowUser);
 
 export default router;

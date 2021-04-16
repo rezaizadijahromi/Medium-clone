@@ -6,7 +6,7 @@ import { useSelector, useDispatch } from "react-redux";
 import Message from "../components/Message";
 import Loader from "../components/Loader";
 
-import { getUserProfile } from "../actions/userActions";
+import { getUserProfile, followUser } from "../actions/userActions";
 
 // we need to list user orders
 
@@ -25,20 +25,24 @@ const ProfileUser = ({ location, history, match }) => {
   const [image, setImage] = useState("");
   const [message, setMessage] = useState("");
 
+  //Follow
+  const userFollow = useSelector((state) => state.userFollower);
+  const {
+    loading: followLoading,
+    success: followSuccess,
+    error: followError,
+  } = userFollow;
+
   const userUpdateProfile = useSelector((state) => state.userUpdateProfile);
 
   const { success } = userUpdateProfile;
 
   useEffect(() => {
-    if (!user.name || success) {
-      dispatch(getUserProfile("profile"));
-      if (userInfo._id === user._id) {
-        console.log("login profile user", userInfo._id);
-        console.log("profile profile user", user._id);
-        console.log("Use effect");
-        history.push("/profile");
+    if (!user || !user.name || success) {
+      if (userInfo._id === match.params.id) {
         dispatch(getUserProfile("profile"));
       } else {
+        // dispatch(followUser(match.params.id));
         dispatch(getUserProfile(match.params.id));
       }
     } else {
@@ -46,7 +50,7 @@ const ProfileUser = ({ location, history, match }) => {
       setEmail(user.email);
       setImage(user.image);
     }
-  }, [dispatch, history, userInfo, user, success, match]);
+  }, [dispatch, history, userInfo, user, success, match, followSuccess]);
 
   const userProfileHandler = (userId) => {
     if (userInfo._id === userId) {
@@ -61,13 +65,18 @@ const ProfileUser = ({ location, history, match }) => {
     }
   };
 
+  const userFollowHandler = (userId) => {
+    // e.preventDefault();
+    dispatch(followUser(userId));
+  };
+
   return (
     <Container>
       <Row>
         <Col>
           <h2>User Profile</h2>
           {message && <Message variant="danger">{message}</Message>}
-          {}
+
           {success && <Message variant="success">Profile Updated</Message>}
           {loading ? (
             <Loader />
@@ -80,6 +89,12 @@ const ProfileUser = ({ location, history, match }) => {
                   <Dropdown.Toggle variant="success" id="dropdown-basic">
                     Followers
                   </Dropdown.Toggle>
+
+                  <Col>
+                    <Button onClick={() => userFollowHandler(match.params.id)}>
+                      {!followSuccess ? "Follow" : "Unfollow"}
+                    </Button>
+                  </Col>
 
                   <Dropdown.Menu>
                     {user.followers.map((userFollowers) => {
