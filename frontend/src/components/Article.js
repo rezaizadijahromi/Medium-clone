@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { Row, Col, Card, Container } from "react-bootstrap";
+import { Col, Card, Container } from "react-bootstrap";
 import Message from "../components/Message";
 import Loader from "../components/Loader";
 import { listArticle } from "../actions/articleActions";
@@ -28,7 +28,7 @@ const Article = ({ article }) => {
           <>
             <Col>
               {articles.map((article) => (
-                <Card className="my-3 p-3 rounded">
+                <Card className="my-3 p-3 rounded" key={article._id}>
                   <Link to={`/article/${article._id}`}>
                     <Card.Img src={article.image} variant="top"></Card.Img>
                   </Link>

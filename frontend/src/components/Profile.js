@@ -1,14 +1,6 @@
 import React, { useState, useEffect } from "react";
 import FollowCM from "./FollowCM";
-import {
-  Table,
-  Form,
-  Button,
-  Row,
-  Col,
-  Container,
-  Dropdown,
-} from "react-bootstrap";
+import { Form, Button, Row, Col, Container, Dropdown } from "react-bootstrap";
 import axios from "axios";
 import { LinkContainer } from "react-router-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
@@ -21,11 +13,9 @@ import { USER_UPDATE_PROFILE_RESET } from "../constants/userConstants";
 // we need to list user orders
 
 const Profile = ({ location, history }) => {
+  const userLogin = useSelector((state) => state.userLogin);
   const userProfile = useSelector((state) => state.userProfile);
   const { loading, error, user } = userProfile;
-
-  const userLogin = useSelector((state) => state.userLogin);
-
   const { userInfo } = userLogin;
 
   const [name, setName] = useState("");
@@ -47,7 +37,9 @@ const Profile = ({ location, history }) => {
       history.push("/login");
     } else {
       if (!user || !user.name || success) {
+        history.push("/profile");
         dispatch(getUserProfile("profile"));
+
         dispatch({ type: USER_UPDATE_PROFILE_RESET });
       } else {
         setName(user.name);
@@ -89,7 +81,17 @@ const Profile = ({ location, history }) => {
   };
 
   const userProfileHandler = (userId) => {
-    dispatch(getUserProfile(userId));
+    if (userInfo._id.toString() === userId.toString()) {
+      console.log("login  user", userInfo._id);
+      console.log("profile  user", user._id);
+      dispatch(getUserProfile("profile"));
+      history.push("/profile");
+      window.location.reload();
+    } else {
+      console.log("not Handler profile");
+
+      dispatch(getUserProfile(userId));
+    }
   };
 
   return (
@@ -106,7 +108,7 @@ const Profile = ({ location, history }) => {
         ) : (
           <Form onSubmit={submitHandler}>
             <Row>
-              <Col>
+              <Col md={{ span: 0, offset: 1 }}>
                 <Dropdown>
                   <Dropdown.Toggle variant="success" id="dropdown-basic">
                     Followers
@@ -130,7 +132,7 @@ const Profile = ({ location, history }) => {
                   </Dropdown.Menu>
                 </Dropdown>
               </Col>
-              <Col>
+              <Col md={{ span: 2, offset: 5 }}>
                 <Dropdown>
                   <Dropdown.Toggle variant="success" id="dropdown-basic">
                     Following

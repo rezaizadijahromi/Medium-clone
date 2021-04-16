@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { Row, Col, Card, Container, Button } from "react-bootstrap";
+import { Col, Card, Container, Button } from "react-bootstrap";
 import Message from "../components/Message";
 import Loader from "../components/Loader";
 import { detailArticle, clapArticle } from "../actions/articleActions";
@@ -13,11 +13,7 @@ const ArtcileDetail = ({ match }) => {
   const { loading, article, error } = articleDetail;
 
   const articleClap = useSelector((state) => state.articleClap);
-  const {
-    loading: clapLoading,
-    error: clapError,
-    success: clapSuccess,
-  } = articleClap;
+  const { success: clapSuccess } = articleClap;
 
   useEffect(() => {
     if (article._id || !article._id !== match.params.id) {

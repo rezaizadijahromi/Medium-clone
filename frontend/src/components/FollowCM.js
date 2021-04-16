@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Row, Col, Container, Image, Card } from "react-bootstrap";
+import { Container, Image, Card } from "react-bootstrap";
 
 const FollowCM = ({ image }) => {
   return (
