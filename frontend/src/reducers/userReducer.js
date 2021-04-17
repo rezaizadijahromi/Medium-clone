@@ -155,7 +155,10 @@ export const userFollowerReducer = (
   }
 };
 
-export const userUnFollowerReducer = (state = { user: {} }, action) => {
+export const userUnFollowerReducer = (
+  state = { user: { success: false } },
+  action,
+) => {
   switch (action.type) {
     case USER_UNFOLLOW_REQUEST:
       return { loading: true };

@@ -48,15 +48,20 @@ const ProfileUser = ({ location, history, match }) => {
 
   const { success } = userUpdateProfile;
 
-  // Followed function
-
   // start follow //
 
   let followed = userInfo.following.map(
     (usr) => usr.user.toString() === match.params.id.toString(),
   );
 
-  console.log("1", followed);
+  let userFollowed = false;
+  followed.forEach((element) => {
+    if (element === true) {
+      return (userFollowed = element);
+    }
+  });
+
+  console.log("userFollowed", userFollowed);
 
   // end follow //
 
@@ -74,9 +79,6 @@ const ProfileUser = ({ location, history, match }) => {
     }
   }, [dispatch, history, userInfo, user, success, match, followSuccess]);
 
-  followSuccess = followed;
-  console.log("2", followSuccess);
-
   const userProfileHandler = (userId) => {
     if (userInfo._id === userId) {
       dispatch(getUserProfile("profile"));
@@ -91,9 +93,13 @@ const ProfileUser = ({ location, history, match }) => {
   const userFollowHandler = (userId) => {
     // e.preventDefault();
 
-    if (followed) {
+    if (userFollowed === true) {
+      console.log("1");
       dispatch(UnfollowUser(userId));
-    } else {
+    }
+    if (userFollowed === false) {
+      console.log("2");
+
       dispatch(followUser(userId));
     }
   };
@@ -120,7 +126,7 @@ const ProfileUser = ({ location, history, match }) => {
 
                   <Col>
                     <Button onClick={() => userFollowHandler(match.params.id)}>
-                      {followSuccess ? "UnFollow" : "Follow"}
+                      follow
                     </Button>
                   </Col>
 

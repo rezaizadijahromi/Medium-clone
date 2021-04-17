@@ -155,7 +155,7 @@ export const updateUserProfile = (user) => async (dispatch, getState) => {
       },
     };
 
-    const { data } = axios.put(`/api/users/profile`, user, config);
+    const { data } = await axios.put(`/api/users/profile`, user, config);
 
     dispatch({ type: USER_UPDATE_PROFILE_SUCCESS, payload: data });
 
@@ -228,9 +228,7 @@ export const UnfollowUser = (id) => async (dispatch, getState) => {
       },
     };
 
-    const { data } = await axios.delete(`/api/users/follow/${id}`, {}, config);
-
-    console.log(data);
+    const { data } = await axios.delete(`/api/users/follow/${id}`, config);
 
     dispatch({ type: USER_UNFOLLOW_SUCCESS, payload: data });
   } catch (error) {
