@@ -68,16 +68,10 @@ const ProfileUser = ({ location, history, match }) => {
 
   //      Follow and UnFollow        //
   const userFollowHandler = (userId) => {
-    // if (userFollowed === true) {
-    //   console.log("1");
-    //   updateUserProfile(userInfo);
-    //   dispatch(UnfollowUser(userId));
-    //   console.log("userInfo", userInfo);
-    // }
-    // if (userFollowed === false) {
     dispatch({ type: USER_UPDATE_PROFILE_RESET });
     dispatch(followUser(userId));
-    // }
+    history.push(`/profile/${match.params.id}`);
+    window.location.reload();
   };
   //          end follow and unfollow           //
 
@@ -110,7 +104,11 @@ const ProfileUser = ({ location, history, match }) => {
             <Row>
               <Col md={{ span: 0 }}>
                 <Button onClick={() => userFollowHandler(match.params.id)}>
-                  {userFollowed ? "UnFollow" : "Follow"}
+                  {user.followers.find(
+                    (usr) => usr.user.toString() === userInfo._id.toString(),
+                  )
+                    ? "UnFollow"
+                    : "Follow"}
                 </Button>
               </Col>
 
@@ -121,20 +119,26 @@ const ProfileUser = ({ location, history, match }) => {
                   </Dropdown.Toggle>
 
                   <Dropdown.Menu>
-                    {user.followers.map((userFollowers) => {
-                      return (
-                        <LinkContainer to={`${userFollowers.user}`}>
-                          <Dropdown.Item key={userFollowers.user}>
-                            <Button
-                              onClick={() =>
-                                userProfileHandler(userFollowers.user)
-                              }>
-                              {userFollowers.name}
-                            </Button>
-                          </Dropdown.Item>
-                        </LinkContainer>
-                      );
-                    })}
+                    {user.followers.length > 0 ? (
+                      user.followers.map((userFollowers) => {
+                        return (
+                          <LinkContainer to={`${userFollowers.user}`}>
+                            <Dropdown.Item key={userFollowers.user}>
+                              <Button
+                                onClick={() =>
+                                  userProfileHandler(userFollowers.user)
+                                }>
+                                {userFollowers.name}
+                              </Button>
+                            </Dropdown.Item>
+                          </LinkContainer>
+                        );
+                      })
+                    ) : (
+                      <Col>
+                        <Message>No Followers</Message>
+                      </Col>
+                    )}
                   </Dropdown.Menu>
                 </Dropdown>
               </Col>
@@ -145,20 +149,26 @@ const ProfileUser = ({ location, history, match }) => {
                   </Dropdown.Toggle>
 
                   <Dropdown.Menu>
-                    {user.following.map((userFollowing) => {
-                      return (
-                        <LinkContainer to={`${userFollowing.user}`}>
-                          <Dropdown.Item key={userFollowing.user}>
-                            <Button
-                              onClick={() =>
-                                userProfileHandler(userFollowing.user)
-                              }>
-                              {userFollowing.name}
-                            </Button>
-                          </Dropdown.Item>
-                        </LinkContainer>
-                      );
-                    })}
+                    {user.following.length > 0 ? (
+                      user.following.map((userFollowing) => {
+                        return (
+                          <LinkContainer to={`${userFollowing.user}`}>
+                            <Dropdown.Item key={userFollowing.user}>
+                              <Button
+                                onClick={() =>
+                                  userProfileHandler(userFollowing.user)
+                                }>
+                                {userFollowing.name}
+                              </Button>
+                            </Dropdown.Item>
+                          </LinkContainer>
+                        );
+                      })
+                    ) : (
+                      <Col>
+                        <Message>You Follow No one</Message>
+                      </Col>
+                    )}
                   </Dropdown.Menu>
                 </Dropdown>
               </Col>
