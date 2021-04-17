@@ -51,6 +51,8 @@ const loginUser = asyncHandler(async (req, res) => {
       name: user.name,
       email: user.email,
       isAdmin: user.isAdmin,
+      following: user.following,
+      followers: user.followers,
       token: generateToken(user._id),
     });
   } else {

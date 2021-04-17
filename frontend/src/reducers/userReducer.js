@@ -31,6 +31,9 @@ import {
   USER_FOLLOW_REQUEST,
   USER_FOLLOW_SUCCESS,
   USER_FOLLOW_FAIL,
+  USER_UNFOLLOW_FAIL,
+  USER_UNFOLLOW_SUCCESS,
+  USER_UNFOLLOW_REQUEST,
 } from "../constants/userConstants";
 
 export const userLoginReducer = (state = {}, action) => {
@@ -154,11 +157,11 @@ export const userFollowerReducer = (
 
 export const userUnFollowerReducer = (state = { user: {} }, action) => {
   switch (action.type) {
-    case USER_FOLLOW_REQUEST:
+    case USER_UNFOLLOW_REQUEST:
       return { loading: true };
-    case USER_FOLLOW_SUCCESS:
+    case USER_UNFOLLOW_SUCCESS:
       return { loading: false, success: true };
-    case USER_FOLLOW_FAIL:
+    case USER_UNFOLLOW_FAIL:
       return { loading: false, error: action.payload };
     default:
       return state;

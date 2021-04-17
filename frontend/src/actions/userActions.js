@@ -230,6 +230,8 @@ export const UnfollowUser = (id) => async (dispatch, getState) => {
 
     const { data } = await axios.delete(`/api/users/follow/${id}`, {}, config);
 
+    console.log(data);
+
     dispatch({ type: USER_UNFOLLOW_SUCCESS, payload: data });
   } catch (error) {
     const message =

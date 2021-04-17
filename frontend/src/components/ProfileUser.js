@@ -31,14 +31,14 @@ const ProfileUser = ({ location, history, match }) => {
 
   //Follow
   const userFollow = useSelector((state) => state.userFollower);
-  const {
+  let {
     loading: followLoading,
     success: followSuccess,
     error: followError,
   } = userFollow;
 
   const userUnFollow = useSelector((state) => state.userUnFollower);
-  const {
+  let {
     loading: unFollowLoading,
     success: unFollowSuccess,
     error: unFollowError,
@@ -48,12 +48,23 @@ const ProfileUser = ({ location, history, match }) => {
 
   const { success } = userUpdateProfile;
 
+  // Followed function
+
+  // start follow //
+
+  let followed = userInfo.following.map(
+    (usr) => usr.user.toString() === match.params.id.toString(),
+  );
+
+  console.log("1", followed);
+
+  // end follow //
+
   useEffect(() => {
     if (!user || !user.name || success) {
       if (userInfo._id === match.params.id) {
         dispatch(getUserProfile("profile"));
       } else {
-        // dispatch(followUser(match.params.id));
         dispatch(getUserProfile(match.params.id));
       }
     } else {
@@ -63,10 +74,11 @@ const ProfileUser = ({ location, history, match }) => {
     }
   }, [dispatch, history, userInfo, user, success, match, followSuccess]);
 
+  followSuccess = followed;
+  console.log("2", followSuccess);
+
   const userProfileHandler = (userId) => {
     if (userInfo._id === userId) {
-      console.log("login profile user", userInfo._id);
-      console.log("profile profile user", userId);
       dispatch(getUserProfile("profile"));
 
       history.push("/profile");
@@ -78,9 +90,9 @@ const ProfileUser = ({ location, history, match }) => {
 
   const userFollowHandler = (userId) => {
     // e.preventDefault();
-    if (followSuccess) {
+
+    if (followed) {
       dispatch(UnfollowUser(userId));
-      console.log(unFollowError);
     } else {
       dispatch(followUser(userId));
     }

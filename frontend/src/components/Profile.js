@@ -89,6 +89,11 @@ const Profile = ({ location, history }) => {
       window.location.reload();
     } else {
       console.log("not Handler profile");
+      let followed = user.followers.find(
+        (usr) => usr.user.toString() === userId.toString(),
+      );
+
+      console.log("4", followed);
 
       dispatch(getUserProfile(userId));
     }
