@@ -25,9 +25,6 @@ import {
   USER_UPDATE_SUCCESS,
   USER_UPDATE_FAIL,
   USER_UPDATE_RESET,
-  USER_LIST_FOLLOW_REQUEST,
-  USER_LIST_FOLLOW_SUCCESS,
-  USER_LIST_FOLLOW_FAIL,
   USER_FOLLOW_REQUEST,
   USER_FOLLOW_SUCCESS,
   USER_FOLLOW_FAIL,
@@ -139,15 +136,20 @@ export const userUpdateReducer = (state = { user: {} }, action) => {
   }
 };
 
-export const userFollowerReducer = (
-  state = { user: { success: false } },
-  action,
-) => {
+export const userFollowerReducer = (state = { user: {} }, action) => {
+  // const newState = Object.assign({}, state);
+  // console.log(newState);
+
   switch (action.type) {
     case USER_FOLLOW_REQUEST:
-      return { loading: true };
+      return { loading: true, ...state };
     case USER_FOLLOW_SUCCESS:
-      return { loading: false, success: true };
+      return {
+        loading: false,
+        ...state,
+        success: true,
+        following: action.payload,
+      };
     case USER_FOLLOW_FAIL:
       return { loading: false, error: action.payload };
     default:

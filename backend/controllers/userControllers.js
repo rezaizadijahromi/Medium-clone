@@ -97,24 +97,45 @@ const followUser = asyncHandler(async (req, res) => {
       (r) => r.user._id.toString() === req.params.id.toString(),
       console.log(req.params.id),
     );
-    if (alreadyFollowed) {
-      res.status(400);
-      throw new Error("Already follow this user");
-    }
-    const follower = {
-      user: req.user._id,
-      name: req.user.name,
-    };
-    const following = {
-      user: req.params.id,
-      name: user.name,
-    };
-    userOwn.following.push(following);
-    user.followers.push(follower);
+    // if (alreadyFollowed) {
+    //   res.status(400);
+    //   throw new Error("Already follow this user");
+    // }
+    if (!alreadyFollowed) {
+      const follower = {
+        user: req.user._id,
+        name: req.user.name,
+      };
+      const following = {
+        user: req.params.id,
+        name: user.name,
+      };
+      userOwn.following.push(following);
+      user.followers.push(follower);
 
-    await userOwn.save();
-    await user.save();
-    res.json("done");
+      await userOwn.save();
+      await user.save();
+      res.json("followed");
+    } else {
+      const delUser = await user.followers.find((usr) => {
+        return usr.user == userOwn.id;
+      });
+
+      console.log("del user ", delUser);
+
+      const delUserOwn = await userOwn.following.find((usr) => {
+        return usr.user == req.params.id;
+      });
+      console.log("del user own", delUserOwn);
+
+      await delUser.remove();
+      await delUserOwn.remove();
+
+      await user.save();
+      await userOwn.save();
+
+      res.json("unfollow");
+    }
   } else {
     res.status(404);
     throw new Error("Not found");
@@ -181,7 +202,7 @@ const getUserProfile = asyncHandler(async (req, res) => {
 // @access Private
 
 const updateUserProfile = asyncHandler(async (req, res) => {
-  const { name, email, password, image } = req.body;
+  const { name, email, password, image, followers, following } = req.body;
   const user = await User.findById(req.user._id);
 
   if (user) {
@@ -189,6 +210,8 @@ const updateUserProfile = asyncHandler(async (req, res) => {
     user.email = email || user.email;
     user.password = password || user.password;
     user.image = image || user.image;
+    user.followers = followers || user.followers;
+    user.following = following || user.following;
   }
 
   const userUpdated = await user.save();

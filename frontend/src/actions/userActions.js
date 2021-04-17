@@ -195,6 +195,9 @@ export const followUser = (id) => async (dispatch, getState) => {
       },
     };
 
+    const datain = localStorage.getItem("userInfo");
+    console.log("datain", datain);
+
     const { data } = await axios.post(`/api/users/follow/${id}`, {}, config);
 
     dispatch({ type: USER_FOLLOW_SUCCESS, payload: data });
