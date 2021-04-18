@@ -69,7 +69,7 @@ export const clapArticle = (id) => async (dispatch) => {
   }
 };
 
-export const createArticle = () => async (dispatch, getState) => {
+export const createArticle = (article) => async (dispatch, getState) => {
   try {
     dispatch({ type: ARTICLE_CREATE_REQUEST });
 
@@ -83,7 +83,7 @@ export const createArticle = () => async (dispatch, getState) => {
       },
     };
 
-    const { data } = await axios.post(`/api/articles/add`, config);
+    const { data } = await axios.post(`/api/articles/add`, article, config);
 
     dispatch({ type: ARTICLE_CREATE_SUCCESS, payload: data });
   } catch (error) {

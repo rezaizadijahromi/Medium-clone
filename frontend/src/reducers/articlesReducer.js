@@ -66,9 +66,11 @@ export const articleCreateReducer = (state = {}, action) => {
     case ARTICLE_CREATE_REQUEST:
       return { loading: true };
     case ARTICLE_CREATE_SUCCESS:
-      return { loading: false, article: action.payload };
+      return { loading: false, article: action.payload, success: true };
     case ARTICLE_CREATE_FAIL:
       return { loading: false, error: action.payload };
+    case "ARTICLE_CREATE_RESET":
+      return {};
     default:
       return state;
   }

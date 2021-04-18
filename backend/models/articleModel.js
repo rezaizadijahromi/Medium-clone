@@ -11,8 +11,14 @@ const ArticleSchema = mongoose.Schema({
   text: String,
   title: String,
   description: String,
-  feature_img: String,
-  claps: Number,
+  feature_img: {
+    type: String,
+    default: "",
+  },
+  claps: {
+    type: Number,
+    default: 0,
+  },
   author: {
     user: {
       type: mongoose.Schema.Types.ObjectId,

@@ -46,10 +46,7 @@ import cloudinary from "cloudinary";
 const addArticle = asyncHandler(async (req, res) => {
   const { title, text, claps, description, feature_img } = req.body;
 
-  if (feature_img === "") {
-    feature_img = "";
-  }
-
+  console.log(feature_img);
   const article = new Article({
     title,
     text,
@@ -60,7 +57,8 @@ const addArticle = asyncHandler(async (req, res) => {
 
   if (article) {
     const newArticle = await article.save();
-    res.status(201).json(article);
+    console.log(newArticle);
+    res.status(201).json(newArticle);
   } else {
     res.status(400);
     throw new Error("Wrong data");

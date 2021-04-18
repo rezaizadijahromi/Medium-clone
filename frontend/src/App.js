@@ -8,9 +8,9 @@ import Article from "./components/Article";
 import ArtcileDetail from "./components/ArtcileDetail";
 import Profile from "./components/Profile";
 import ProfileUser from "./components/ProfileUser";
-import ArticleCreate from "./components/ArticleCreate";
+// import ArticleCreate from "./components/ArticleCreateOld";
 
-// import ArticleCreate from "./components/ArticleCreate";
+import ArticleCreate from "./components/ArticleCreate";
 
 const App = () => {
   return (
