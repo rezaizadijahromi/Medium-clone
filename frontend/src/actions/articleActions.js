@@ -10,6 +10,9 @@ import {
   ARTICLE_CLAP_REQUEST,
   ARTICLE_CLAP_SUCCESS,
   ARTICLE_CLAP_FAIL,
+  ARTICLE_CREATE_REQUEST,
+  ARTICLE_CREATE_SUCCESS,
+  ARTICLE_CREATE_FAIL,
 } from "../constants/articleConstats";
 
 export const listArticle = () => async (dispatch) => {
@@ -58,6 +61,34 @@ export const clapArticle = (id) => async (dispatch) => {
   } catch (error) {
     dispatch({
       type: ARTICLE_CLAP_FAIL,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    });
+  }
+};
+
+export const createArticle = () => async (dispatch, getState) => {
+  try {
+    dispatch({ type: ARTICLE_CREATE_REQUEST });
+
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.post(`/api/articles/add`, config);
+
+    dispatch({ type: ARTICLE_CREATE_SUCCESS, payload: data });
+  } catch (error) {
+    dispatch({
+      type: ARTICLE_CREATE_FAIL,
       payload:
         error.response && error.response.data.message
           ? error.response.data.message

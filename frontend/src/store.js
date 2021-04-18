@@ -6,6 +6,7 @@ import {
   articleListReducer,
   articleDetailReducer,
   articleClapReducer,
+  articleCreateReducer,
 } from "./reducers/articlesReducer";
 
 import {
@@ -24,6 +25,7 @@ const reducer = combineReducers({
   articleList: articleListReducer,
   articleDetail: articleDetailReducer,
   articleClap: articleClapReducer,
+  articleCreate: articleCreateReducer,
   userLogin: userLoginReducer,
   userProfile: userProfileReducer,
   userRegister: userRegisterReducer,

@@ -8,6 +8,9 @@ import Article from "./components/Article";
 import ArtcileDetail from "./components/ArtcileDetail";
 import Profile from "./components/Profile";
 import ProfileUser from "./components/ProfileUser";
+import ArticleCreate from "./components/ArticleCreate";
+
+// import ArticleCreate from "./components/ArticleCreate";
 
 const App = () => {
   return (
@@ -18,6 +21,7 @@ const App = () => {
         <Route path="/register" component={Register} />
         <Route path="/" component={Article} exact />
         <Route path="/article/:id" component={ArtcileDetail} />
+        <Route path="/add" component={ArticleCreate} />
         <Route path="/profile" component={Profile} exact />
         <Route path="/profile/:id" component={ProfileUser} exact />
 

@@ -8,6 +8,9 @@ import {
   ARTICLE_CLAP_REQUEST,
   ARTICLE_CLAP_SUCCESS,
   ARTICLE_CLAP_FAIL,
+  ARTICLE_CREATE_REQUEST,
+  ARTICLE_CREATE_SUCCESS,
+  ARTICLE_CREATE_FAIL,
 } from "../constants/articleConstats";
 
 export const articleListReducer = (state = { articles: [] }, action) => {
@@ -52,6 +55,19 @@ export const articleClapReducer = (
     case ARTICLE_CLAP_SUCCESS:
       return { loading: false, success: true };
     case ARTICLE_CLAP_FAIL:
+      return { loading: false, error: action.payload };
+    default:
+      return state;
+  }
+};
+
+export const articleCreateReducer = (state = {}, action) => {
+  switch (action.type) {
+    case ARTICLE_CREATE_REQUEST:
+      return { loading: true };
+    case ARTICLE_CREATE_SUCCESS:
+      return { loading: false, article: action.payload };
+    case ARTICLE_CREATE_FAIL:
       return { loading: false, error: action.payload };
     default:
       return state;
