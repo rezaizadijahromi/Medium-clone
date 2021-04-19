@@ -122,15 +122,20 @@ const addClap = asyncHandler(async (req, res) => {
 });
 
 const addComment = asyncHandler(async (req, res) => {
+  const { rating, comment } = req.body;
+
   const article = await Article.findById(req.params.id);
 
   if (article) {
-    const commentObj = {
-      text: req.body.text,
+    const review = {
+      name: req.user.name,
+      rating: Number(rating),
+      comment,
+      user: req.user._id,
     };
 
     console.log(article);
-    article.comments.push(commentObj);
+    article.reviews.push(review);
     await article.save();
     res.status(201).json({ message: "comment added" });
   } else {

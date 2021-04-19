@@ -19,6 +19,6 @@ router.route("/:id/clap").post(addClap);
 // Should protect this later
 router.route("/add").post(protect, addArticle);
 router.route("/:id").get(getArticleById).put(protect, updateArticle);
-router.route("/:id/comment").post(protect, addComment);
+router.route("/:id/review").post(protect, addComment);
 
 export default router;

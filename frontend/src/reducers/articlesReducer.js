@@ -36,7 +36,10 @@ export const articleListReducer = (state = { articles: [] }, action) => {
   }
 };
 
-export const articleDetailReducer = (state = { article: {} }, action) => {
+export const articleDetailReducer = (
+  state = { article: { reviews: [] } },
+  action,
+) => {
   switch (action.type) {
     case ARTICLE_DETAILS_REQUEST:
       return { loading: true, ...state };
@@ -80,7 +83,7 @@ export const articleCreateReducer = (state = {}, action) => {
   }
 };
 
-export const articleCreateReview = (state = {}, action) => {
+export const articleCreateReviewReducer = (state = {}, action) => {
   switch (action.type) {
     case ARTICLE_CREATE_REVIEW_REQUEST:
       return { loading: true };

@@ -119,7 +119,7 @@ export const createArticleReview = (articleId, review) => async (
     };
 
     const { data } = await axios.post(
-      `article/${articleId}/review`,
+      `/api/articles/${articleId}/review`,
       review,
       config,
     );
