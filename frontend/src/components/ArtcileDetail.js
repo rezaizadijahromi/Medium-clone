@@ -20,7 +20,7 @@ import {
 
 import Rating from "./Rating";
 
-const ArtcileDetail = ({ match }) => {
+const ArtcileDetail = ({ match, history }) => {
   const [comment, setComment] = useState("");
   const [rating, setRating] = useState(0);
 
@@ -49,9 +49,7 @@ const ArtcileDetail = ({ match }) => {
       setRating(0);
       setComment("");
     }
-    if (article._id || !article._id !== match.params.id) {
-      dispatch(detailArticle(match.params.id));
-    }
+    dispatch(detailArticle(match.params.id));
   }, [match, article._id, dispatch, clapSuccess, successArticleReview]);
 
   const clapHandler = (e) => {
@@ -69,6 +67,14 @@ const ArtcileDetail = ({ match }) => {
     );
   };
 
+  const editHandler = () => {
+    if (article.author.user.toString() === userInfo._id.toString()) {
+      history.push(`/article/${match.params.id}/edit`);
+    } else {
+      window.alert("You are not the author");
+    }
+  };
+
   // follow function
 
   // if the author is the user can edit the article
@@ -77,6 +83,17 @@ const ArtcileDetail = ({ match }) => {
     <>
       <Link className="btn btn-light my-3" to="/">
         Go Back
+      </Link>
+
+      {/* {article.author === userInfo._id.toString() ? (
+        <Link className="btn btn-light my-3 float-right" to="/">
+          Edit article
+        </Link>
+      ) : (
+        ""
+      )} */}
+      <Link className="btn btn-light my-3 float-right" onClick={editHandler}>
+        Edit article
       </Link>
 
       {loading ? (

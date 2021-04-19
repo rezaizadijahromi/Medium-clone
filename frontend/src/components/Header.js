@@ -28,7 +28,7 @@ const Header = () => {
               {userInfo ? (
                 <LinkContainer to="/add">
                   <Nav.Link>
-                    <i class="far fa-newspaper"></i> Add Article
+                    <i className="far fa-newspaper"></i> Add Article
                   </Nav.Link>
                 </LinkContainer>
               ) : (

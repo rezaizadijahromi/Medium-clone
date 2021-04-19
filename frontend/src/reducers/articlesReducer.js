@@ -11,6 +11,9 @@ import {
   ARTICLE_CREATE_REQUEST,
   ARTICLE_CREATE_SUCCESS,
   ARTICLE_CREATE_FAIL,
+  ARTICLE_UPDATE_REQUEST,
+  ARTICLE_UPDATE_SUCCESS,
+  ARTICLE_UPDATE_FAIL,
   ARTICLE_CREATE_REVIEW_REQUEST,
   ARTICLE_CREATE_REVIEW_SUCCESS,
   ARTICLE_CREATE_REVIEW_FAIL,
@@ -47,6 +50,8 @@ export const articleDetailReducer = (
       return { loading: false, article: action.payload };
     case ARTICLE_DETAILS_FAIL:
       return { loading: false, error: action.payload };
+    case "ARTICLE_DETAILS_RESET":
+      return {};
     default:
       return state;
   }
@@ -77,6 +82,21 @@ export const articleCreateReducer = (state = {}, action) => {
     case ARTICLE_CREATE_FAIL:
       return { loading: false, error: action.payload };
     case "ARTICLE_CREATE_RESET":
+      return {};
+    default:
+      return state;
+  }
+};
+
+export const articleUpdateReducer = (state = { article: {} }, action) => {
+  switch (action.type) {
+    case ARTICLE_UPDATE_REQUEST:
+      return { loading: true };
+    case ARTICLE_UPDATE_SUCCESS:
+      return { loading: false, success: true, article: action.payload };
+    case ARTICLE_UPDATE_FAIL:
+      return { loading: false, error: action.payload };
+    case "ARTICLE_UPDATE_RESET":
       return {};
     default:
       return state;

@@ -11,6 +11,7 @@ import ProfileUser from "./components/ProfileUser";
 // import ArticleCreate from "./components/ArticleCreateOld";
 
 import ArticleCreate from "./components/ArticleCreate";
+import ArticleUpdate from "./components/ArticleUpdate";
 
 const App = () => {
   return (
@@ -20,7 +21,9 @@ const App = () => {
         <Route path="/login" component={Login} />
         <Route path="/register" component={Register} />
         <Route path="/" component={Article} exact />
-        <Route path="/article/:id" component={ArtcileDetail} />
+        <Route path="/article/:id" exact component={ArtcileDetail} />
+        <Route path="/article/:id/edit" exact component={ArticleUpdate} />
+
         <Route path="/add" component={ArticleCreate} />
         <Route path="/profile" component={Profile} exact />
         <Route path="/profile/:id" component={ProfileUser} exact />

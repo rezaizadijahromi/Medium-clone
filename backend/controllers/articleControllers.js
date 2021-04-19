@@ -7,7 +7,7 @@ import cloudinary from "cloudinary";
 const addArticle = asyncHandler(async (req, res) => {
   const { title, text, claps, description, feature_img } = req.body;
 
-  const user = User.findById(req.user._id);
+  const user = await User.findById(req.user._id);
   const authore = {
     name: req.user.name,
     user: req.user._id,
@@ -59,20 +59,28 @@ const getArticleById = asyncHandler(async (req, res) => {
 const updateArticle = asyncHandler(async (req, res) => {
   const { title, text, claps, description, feature_img } = req.body;
   const article = await Article.findById(req.params.id);
+  const user = await User.findById(req.user._id);
 
-  if (article) {
-    article.title = title || article.title;
-    article.text = text || article.text;
-    article.description = description || article.description;
-    article.feature_img = feature_img || article.feature_img;
+  console.log(user._id);
+  console.log(article.author.user);
+
+  if (user._id.toString() === article.author.user.toString()) {
+    if (article) {
+      article.title = title || article.title;
+      article.text = text || article.text;
+      article.description = description || article.description;
+      article.feature_img = feature_img || article.feature_img;
+    } else {
+      res.status(404);
+      throw new Error("Article not found");
+    }
+
+    const articleUpdated = await article.save();
+
+    res.json(articleUpdated);
   } else {
-    res.status(404);
-    throw new Error("Article not found");
+    throw new Error("You are not author of this article");
   }
-
-  const articleUpdated = await article.save();
-
-  res.json(articleUpdated);
 });
 
 const addClap = asyncHandler(async (req, res) => {
