@@ -7,6 +7,31 @@ import mongoosePaginate from "mongoose-paginate-v2";
 
 const dompurify = createDomPurify(new JSDOM().window);
 
+const reviewSchema = mongoose.Schema(
+  {
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "User",
+    },
+    name: {
+      type: String,
+      required: true,
+    },
+    comment: {
+      type: String,
+      required: true,
+    },
+    rating: {
+      type: Number,
+      required: true,
+    },
+  },
+  {
+    timestamps: true,
+  },
+);
+
 const ArticleSchema = mongoose.Schema({
   text: String,
   title: String,
@@ -25,15 +50,7 @@ const ArticleSchema = mongoose.Schema({
       ref: "User",
     },
   },
-  comments: [
-    {
-      text: String,
-      // author: {
-      //   type: mongoose.Schema.Types.ObjectId,
-      //   ref: "User",
-      // },
-    },
-  ],
+  reviews: [reviewSchema],
 });
 
 ArticleSchema.methods.clap = function () {

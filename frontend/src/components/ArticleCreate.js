@@ -8,12 +8,26 @@ import FormContainer from "../components/FormContainer";
 import { createArticle } from "../actions/articleActions";
 import axios from "axios";
 
+//editor
+import Editor from "draft-js-plugins-editor";
+import { EditorState, RichUtils } from "draft-js";
+import "draft-js/dist/Draft.css";
+
+// end
+
 const ArticleCreate = ({ history }) => {
   const [text, setText] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [feature_img, setFeatureImage] = useState("");
   const [uploading, setUploading] = useState(false);
+  const [editorState, setEditorState] = useState(() =>
+    EditorState.createEmpty(),
+  );
+  const editor = React.useRef(null);
+  function focusEditor() {
+    editor.current.focus();
+  }
 
   const dispatch = useDispatch();
 
@@ -55,7 +69,6 @@ const ArticleCreate = ({ history }) => {
     );
     dispatch({ type: "ARTICLE_CREATE_RESET" });
     history.push("/");
-    window.location.reload();
   };
   //           End submit handler    ///
 
@@ -82,7 +95,6 @@ const ArticleCreate = ({ history }) => {
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}></Form.Control>
             </Form.Group>
-
             <Form.Group controlId="text">
               <Form.Label>text</Form.Label>
               <Form.Control
@@ -91,7 +103,6 @@ const ArticleCreate = ({ history }) => {
                 value={text}
                 onChange={(e) => setText(e.target.value)}></Form.Control>
             </Form.Group>
-
             <Form.Group controlId="featureImage">
               <Form.Label>featureImage</Form.Label>
               <Form.Control
@@ -108,17 +119,16 @@ const ArticleCreate = ({ history }) => {
                 onChange={uploadFileHandler}></Form.File>
               {uploading && <Loader />}
             </Form.Group>
-
             <Form.Group controlId="description">
               <Form.Label>Description</Form.Label>
+
               <Form.Control
                 type="text"
                 placeholder="Enter description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}></Form.Control>
             </Form.Group>
-
-            <Button type="submit" variant="primary">
+            <Button type="submit" variant="primary" onSubmit={submitHandler}>
               Submit
             </Button>
           </Form>
@@ -129,3 +139,84 @@ const ArticleCreate = ({ history }) => {
 };
 
 export default ArticleCreate;
+
+// // adding functions to editor
+
+// const onChange = (editorState) => {
+//     setEditorState(editorState);
+//   };
+
+//   const handleKeyCommand = (command) => {
+//     const newState = RichUtils.handleKeyCommand(editorState, command);
+//     if (newState) {
+//       onChange(newState);
+//       return "handled";
+//     }
+//     return "not-handled";
+//   };
+
+//   const onUnderlineClick = (e) => {
+//     e.preventDefault();
+//     onChange(RichUtils.toggleInlineStyle(editorState, "UNDERLINE"));
+//   };
+
+//   const onBoldClick = (e) => {
+//     e.preventDefault();
+//     onChange(() => RichUtils.toggleInlineStyle(editorState, "BOLD"));
+//   };
+
+//   const onItalicClick = (e) => {
+//     e.preventDefault();
+//     onChange(() => RichUtils.toggleInlineStyle(editorState, "ITALIC"));
+//   };
+
+//   const onStrikeThroughClick = (e) => {
+//     e.preventDefault();
+//     onChange(() => RichUtils.toggleInlineStyle(editorState, "STRIKETHROUGH"));
+//   };
+
+//   const onHighlight = (e) => {
+//     e.preventDefault();
+//     onChange(() => RichUtils.toggleInlineStyle(editorState, "HIGHLIGHT"));
+//   };
+//   // end of functions
+
+// <Form.Group>
+//                 <div className="editorContainer">
+//                   <button className="underline" onClick={onUnderlineClick}>
+//                     U
+//                   </button>
+//                   <button className="bold" onClick={onBoldClick}>
+//                     <b>B</b>
+//                   </button>
+//                   <button className="italic" onClick={onItalicClick}>
+//                     <em>I</em>
+//                   </button>
+//                   <button
+//                     className="strikethrough"
+//                     onClick={onStrikeThroughClick}>
+//                     abc
+//                   </button>
+//                   <button className="highlight" onClick={onHighlight}>
+//                     <span style={{ background: "yellow", padding: "0.3em" }}>
+//                       H
+//                     </span>
+//                   </button>
+//                 </div>
+//                 <div
+//                   style={{
+//                     border: "1px solid black",
+//                     minHeight: "6em",
+//                     cursor: "text",
+//                   }}
+//                   onClick={focusEditor}>
+//                   <Editor
+//                     ref={editor}
+//                     editorState={editorState}
+//                     onChange={onChange}
+//                     handleKeyCommand={handleKeyCommand}
+//                     placeholder="Write something!"
+//                     value={editorState}
+//                   />
+//                 </div>
+//               </Form.Group>

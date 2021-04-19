@@ -11,6 +11,10 @@ import {
   ARTICLE_CREATE_REQUEST,
   ARTICLE_CREATE_SUCCESS,
   ARTICLE_CREATE_FAIL,
+  ARTICLE_CREATE_REVIEW_REQUEST,
+  ARTICLE_CREATE_REVIEW_SUCCESS,
+  ARTICLE_CREATE_REVIEW_FAIL,
+  ARTICLE_CREATE_REVIEW_RESET,
 } from "../constants/articleConstats";
 
 export const articleListReducer = (state = { articles: [] }, action) => {
@@ -70,6 +74,21 @@ export const articleCreateReducer = (state = {}, action) => {
     case ARTICLE_CREATE_FAIL:
       return { loading: false, error: action.payload };
     case "ARTICLE_CREATE_RESET":
+      return {};
+    default:
+      return state;
+  }
+};
+
+export const articleCreateReview = (state = {}, action) => {
+  switch (action.type) {
+    case ARTICLE_CREATE_REVIEW_REQUEST:
+      return { loading: true };
+    case ARTICLE_CREATE_REVIEW_SUCCESS:
+      return { loading: false, success: true };
+    case ARTICLE_CREATE_REVIEW_FAIL:
+      return { loading: false, error: action.payload };
+    case ARTICLE_CREATE_REVIEW_RESET:
       return {};
     default:
       return state;
