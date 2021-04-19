@@ -4,60 +4,26 @@ import asyncHandler from "express-async-handler";
 import fs from "fs";
 import cloudinary from "cloudinary";
 
-// const addArticle = asyncHandler(async (req, res, next) => {
-//   let { title, text, claps, description } = req.body;
-
-//   if (req.files.image) {
-//     cloudinary.uploader.upload(
-//       req.files.image.path,
-//       (result) => {
-//         let obj = {
-//           title,
-//           text,
-//           claps,
-//           description,
-//           feature_img: result.url !== null ? result.url : "",
-//         };
-//         saveArticle(obj);
-//       },
-//       {
-//         resource_type: "image",
-//         eager: [{ effect: "sepia" }],
-//       },
-//     );
-//   } else {
-//     saveArticle({ text, title, claps, description, feature_img: "" });
-//   }
-
-//   async function saveArticle(obj) {
-//     const article = await new Article(obj);
-
-//     await article.save();
-
-//     try {
-//       return article.addAuthor(req.body.author_id);
-//     } catch (error) {
-//       res.status(400);
-//       throw new Error(error);
-//     }
-//   }
-// });
-
 const addArticle = asyncHandler(async (req, res) => {
   const { title, text, claps, description, feature_img } = req.body;
 
-  console.log(feature_img);
+  const user = User.findById(req.user._id);
+  const authore = {
+    name: req.user.name,
+    user: req.user._id,
+  };
   const article = new Article({
     title,
     text,
     claps,
     description,
     feature_img,
+    author: authore,
   });
 
   if (article) {
     const newArticle = await article.save();
-    console.log(newArticle);
+    // console.log(newArticle);
     res.status(201).json(newArticle);
   } else {
     res.status(400);
