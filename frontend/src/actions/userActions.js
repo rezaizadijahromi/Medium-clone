@@ -118,7 +118,7 @@ export const getUserProfile = (id) => async (dispatch, getState) => {
         Authorization: `Bearer ${userInfo.token}`,
       },
     };
-
+    console.log(id);
     const { data } = await axios.get(`/api/users/${id}`, config);
 
     dispatch({
@@ -194,9 +194,6 @@ export const followUser = (id) => async (dispatch, getState) => {
         Authorization: `Bearer ${userInfo.token}`,
       },
     };
-
-    const datain = localStorage.getItem("userInfo");
-    console.log("datain", datain);
 
     const { data } = await axios.post(`/api/users/follow/${id}`, {}, config);
 

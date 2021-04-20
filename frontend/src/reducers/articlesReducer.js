@@ -40,14 +40,19 @@ export const articleListReducer = (state = { articles: [] }, action) => {
 };
 
 export const articleDetailReducer = (
-  state = { article: { reviews: [] } },
+  state = { article: { reviews: [], author: {} } },
   action,
 ) => {
   switch (action.type) {
     case ARTICLE_DETAILS_REQUEST:
       return { loading: true, ...state };
     case ARTICLE_DETAILS_SUCCESS:
-      return { loading: false, article: action.payload };
+      return {
+        loading: false,
+        article: action.payload,
+        authorUser: action.payload.author.user,
+        authorName: action.payload.author.name,
+      };
     case ARTICLE_DETAILS_FAIL:
       return { loading: false, error: action.payload };
     case "ARTICLE_DETAILS_RESET":

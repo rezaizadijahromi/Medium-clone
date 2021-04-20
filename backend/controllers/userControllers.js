@@ -185,10 +185,7 @@ const unfollowUser = asyncHandler(async (req, res) => {
 // @access Private
 
 const getUserProfile = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.user._id).populate(
-    "user",
-    "following followers",
-  );
+  const user = await User.findById(req.user._id);
   if (user) {
     res.json(user);
   } else {

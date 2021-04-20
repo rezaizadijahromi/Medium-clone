@@ -55,7 +55,11 @@ export const userProfileReducer = (
     case USER_PROFILE_REQUEST:
       return { ...state, loading: true };
     case USER_PROFILE_SUCCESS:
-      return { loading: false, user: action.payload };
+      return {
+        loading: false,
+        user: action.payload,
+        userId: action.payload._id,
+      };
     case USER_PROFILE_FAIL:
       return { loading: false, error: action.payload };
     case USER_PROFILE_RESET:

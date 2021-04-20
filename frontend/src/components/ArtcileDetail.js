@@ -19,16 +19,20 @@ import {
 } from "../actions/articleActions";
 
 import Rating from "./Rating";
+import { followUser, getUserProfile } from "../actions/userActions";
+import { USER_UPDATE_PROFILE_RESET } from "../constants/userConstants";
 
 const ArtcileDetail = ({ match, history }) => {
+  const articleDetail = useSelector((state) => state.articleDetail);
+
+  const { loading, article, error, authorUser, authorName } = articleDetail;
+
+  console.log(authorUser);
+
   const [comment, setComment] = useState("");
   const [rating, setRating] = useState(0);
 
   const dispatch = useDispatch();
-
-  const articleDetail = useSelector((state) => state.articleDetail);
-  const { loading, article, error } = articleDetail;
-  console.log("article", article);
 
   const articleClap = useSelector((state) => state.articleClap);
   const { success: clapSuccess } = articleClap;
@@ -44,13 +48,27 @@ const ArtcileDetail = ({ match, history }) => {
     success: successArticleReview,
   } = articleCreateReview;
 
+  //      Start user profile        //
+  const userProfile = useSelector((state) => state.userProfile);
+  const {
+    loading: loadingProfile,
+    error: errorProfile,
+    user: userProfilee,
+    userId,
+  } = userProfile;
+
+  //      End user profile        //
+
   useEffect(() => {
     if (successArticleReview) {
       setRating(0);
       setComment("");
     }
-    dispatch(detailArticle(match.params.id));
-  }, [match, article._id, dispatch, clapSuccess, successArticleReview]);
+    if (article._id || !article._id !== match.params.id) {
+      dispatch(detailArticle(match.params.id));
+      // dispatch(getUserProfile(authorUser));
+    }
+  }, [dispatch, match, successArticleReview, article._id, authorUser]);
 
   const clapHandler = (e) => {
     e.preventDefault();
@@ -75,7 +93,14 @@ const ArtcileDetail = ({ match, history }) => {
     }
   };
 
-  // follow function
+  // follow function and Author info tests
+
+  const userFollowHandler = (userId) => {
+    dispatch(getUserProfile(userId));
+
+    dispatch(followUser(userId));
+    console.log(userProfilee);
+  };
 
   // if the author is the user can edit the article
 
@@ -96,12 +121,21 @@ const ArtcileDetail = ({ match, history }) => {
         Edit article
       </Link>
 
-      {loading ? (
+      {loadingProfile ? (
         <Loader />
       ) : error ? (
-        <Message variant="danger">{error}</Message>
+        <Message variant="danger">{errorProfile}</Message>
       ) : (
         <>
+          <Col md={{ span: 0 }}>
+            <Button onClick={() => userFollowHandler(authorUser)}>
+              {userProfilee.followers.find(
+                (usr) => usr.user.toString() === userInfo._id.toString(),
+              )
+                ? "UnFollow"
+                : "Follow"}
+            </Button>
+          </Col>
           <Container>
             <Col md={20}>
               <Card>
