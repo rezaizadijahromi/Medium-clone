@@ -18,6 +18,9 @@ import {
   ARTICLE_CREATE_REVIEW_SUCCESS,
   ARTICLE_CREATE_REVIEW_FAIL,
   ARTICLE_CREATE_REVIEW_RESET,
+  ARTICLE_DELETE_REQUEST,
+  ARTICLE_DELETE_SUCCESS,
+  ARTICLE_DELETE_FAIL,
 } from "../constants/articleConstats";
 
 export const articleListReducer = (state = { articles: [] }, action) => {
@@ -118,6 +121,19 @@ export const articleCreateReviewReducer = (state = {}, action) => {
       return { loading: false, error: action.payload };
     case ARTICLE_CREATE_REVIEW_RESET:
       return {};
+    default:
+      return state;
+  }
+};
+
+export const articleDeleteReducer = (state = {}, action) => {
+  switch (action.type) {
+    case ARTICLE_DELETE_REQUEST:
+      return { loading: true };
+    case ARTICLE_DELETE_SUCCESS:
+      return { loading: false, success: true };
+    case ARTICLE_DELETE_FAIL:
+      return { loading: false, error: action.payload };
     default:
       return state;
   }

@@ -2,6 +2,7 @@ import {
   addArticle,
   getAllArticles,
   getArticleById,
+  deleteArticle,
   addClap,
   addComment,
   updateArticle,
@@ -18,7 +19,11 @@ router.route("/").get(getAllArticles);
 router.route("/:id/clap").post(addClap);
 // Should protect this later
 router.route("/add").post(protect, addArticle);
-router.route("/:id").get(getArticleById).put(protect, updateArticle);
+router
+  .route("/:id")
+  .get(getArticleById)
+  .put(protect, updateArticle)
+  .delete(protect, deleteArticle);
 router.route("/:id/review").post(protect, addComment);
 
 export default router;

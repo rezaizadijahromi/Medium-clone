@@ -132,8 +132,8 @@ const ArtcileDetail = ({ match, history }) => {
               {userProfilee.followers.find(
                 (usr) => usr.user.toString() === userInfo._id.toString(),
               )
-                ? "UnFollow"
-                : "Follow"}
+                ? "Follow"
+                : "UnFollow"}
             </Button>
           </Col>
           <Container>

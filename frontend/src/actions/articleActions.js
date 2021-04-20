@@ -19,6 +19,9 @@ import {
   ARTICLE_CREATE_REVIEW_REQUEST,
   ARTICLE_CREATE_REVIEW_SUCCESS,
   ARTICLE_CREATE_REVIEW_FAIL,
+  ARTICLE_DELETE_FAIL,
+  ARTICLE_DELETE_REQUEST,
+  ARTICLE_DELETE_SUCCESS,
 } from "../constants/articleConstats";
 
 export const listArticle = () => async (dispatch) => {
@@ -163,6 +166,34 @@ export const createArticleReview = (articleId, review) => async (
   } catch (error) {
     dispatch({
       type: ARTICLE_CREATE_REVIEW_FAIL,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    });
+  }
+};
+
+export const deleteArticle = (articleId) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: ARTICLE_DELETE_REQUEST });
+
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.delete(`/api/articles/${articleId}`, config);
+
+    dispatch({ type: ARTICLE_DELETE_SUCCESS, payload: data });
+  } catch (error) {
+    dispatch({
+      type: ARTICLE_DELETE_FAIL,
       payload:
         error.response && error.response.data.message
           ? error.response.data.message

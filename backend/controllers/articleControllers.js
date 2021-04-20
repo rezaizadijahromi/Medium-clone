@@ -118,10 +118,31 @@ const addComment = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc    Delete a article
+// @route   DELETE /api/articles/:id
+// @access  Private
+
+const deleteArticle = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id);
+  const article = await Article.findById(req.params.id);
+
+  if (user._id.toString() === article.author.user.toString()) {
+    if (article) {
+      await article.remove();
+      res.json({ message: "Article removed" });
+    } else {
+      throw new Error("Article not found");
+    }
+  } else {
+    throw new Error("You are not the author of this article");
+  }
+});
+
 export {
   addArticle,
   getAllArticles,
   getArticleById,
+  deleteArticle,
   addClap,
   addComment,
   updateArticle,

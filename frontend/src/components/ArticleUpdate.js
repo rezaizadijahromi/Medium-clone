@@ -5,7 +5,11 @@ import { useDispatch, useSelector } from "react-redux";
 import Message from "../components/Message";
 import Loader from "../components/Loader";
 import FormContainer from "../components/FormContainer";
-import { detailArticle, updateArticle } from "../actions/articleActions";
+import {
+  deleteArticle,
+  detailArticle,
+  updateArticle,
+} from "../actions/articleActions";
 import axios from "axios";
 
 const ArticleUpdate = ({ history, match }) => {
@@ -27,6 +31,17 @@ const ArticleUpdate = ({ history, match }) => {
     error: errorUpdate,
     success: successUpdate,
   } = articleUpdate;
+
+  //               Start delete           //
+
+  const articleDelete = useSelector((state) => state.articleDelete);
+  const {
+    loading: loadingDelete,
+    error: errorDelete,
+    success: successDelete,
+  } = articleDelete;
+
+  //               End delete           //
 
   //               Start Use Effect        //
   useEffect(() => {
@@ -88,6 +103,15 @@ const ArticleUpdate = ({ history, match }) => {
   };
   //           End submit handler    ///
 
+  //           Start delete handler           //
+  const deleteHandeler = (e, articleId) => {
+    e.preventDefault();
+    dispatch(deleteArticle(articleId));
+    history.push("/");
+    window.location.reload();
+  };
+  //           End delete handler           //
+
   return (
     <>
       <Link to={`/article/${match.params.id}`} className="btn btn-light my-3">
@@ -147,6 +171,17 @@ const ArticleUpdate = ({ history, match }) => {
             <Button type="submit" variant="primary" onSubmit={submitHandler}>
               Submit
             </Button>
+
+            {loadingDelete ? (
+              <Loader />
+            ) : (
+              <Button
+                variant="danger"
+                className="float-right"
+                onClick={(e) => deleteHandeler(e, match.params.id)}>
+                Delete Article
+              </Button>
+            )}
           </Form>
         )}
       </FormContainer>
