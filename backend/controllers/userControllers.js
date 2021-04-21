@@ -65,12 +65,19 @@ const loginUser = asyncHandler(async (req, res) => {
 // @route /api/users/profile/:id
 // @access Public
 const getUserInfo = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.params.id).populate(
-    "user",
-    "followers following",
-  );
+  const user = await User.findById(req.params.id);
+  const article = await Article.find({});
+
+  const matches = [];
   if (user) {
-    res.json(user);
+    const author_user = await article.find((article) => {
+      if (article.author.user.toString() === user._id.toString()) {
+        matches.push(article);
+      }
+    });
+
+    const data = { user, matches };
+    res.json(data);
   } else {
     res.status(404);
     throw new Error("User not found");

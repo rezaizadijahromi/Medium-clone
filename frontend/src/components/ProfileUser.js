@@ -35,6 +35,7 @@ const ProfileUser = ({ location, history, match }) => {
   const userLogin = useSelector((state) => state.userLogin);
   const userProfile = useSelector((state) => state.userProfile);
   const { loading, error, user, articles } = userProfile;
+  console.log("User 1", user);
   const { userInfo } = userLogin;
   console.log(articles);
 
@@ -55,7 +56,7 @@ const ProfileUser = ({ location, history, match }) => {
       setEmail(user.email);
       setImage(user.image);
     }
-  }, [dispatch, history, userInfo, user, success, match]);
+  }, [dispatch, userInfo, user, success, match]);
   //               End userEffect           ///
 
   // start follow //
@@ -71,7 +72,7 @@ const ProfileUser = ({ location, history, match }) => {
     }
   });
 
-  console.log("userFollowed", user);
+  console.log("userFollowed", userFollowed);
 
   // end follow //
 
@@ -87,12 +88,9 @@ const ProfileUser = ({ location, history, match }) => {
   // Show the followers and followings //
   const userProfileHandler = (userId) => {
     if (userInfo._id === userId) {
-      dispatch(getUserProfile("profile"));
-
       history.push("/profile");
       window.location.reload();
     } else {
-      dispatch(getUserProfile(userId));
     }
   };
   //          end profile handler         //
@@ -111,15 +109,17 @@ const ProfileUser = ({ location, history, match }) => {
             {user.name}'s Articles
           </ListGroup.Item>
           <ListGroup.Item as="li">
-            {articles.map((article) => (
-              <Button
-                block
-                className="mx-1"
-                variant="info"
-                onClick={(e) => articlesHandler(e, article._id)}>
-                {article.title}
-              </Button>
-            ))}
+            {articles.length > 0
+              ? articles.map((article) => (
+                  <Button
+                    block
+                    className="mx-1"
+                    variant="info"
+                    onClick={(e) => articlesHandler(e, article._id)}>
+                    {article.title}
+                  </Button>
+                ))
+              : "No Article"}
           </ListGroup.Item>
         </ListGroup>
       </Col>
