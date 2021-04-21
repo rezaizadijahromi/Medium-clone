@@ -6,6 +6,7 @@ import {
   addClap,
   addComment,
   updateArticle,
+  tagList,
 } from "../controllers/articleControllers.js";
 import { protect, admin } from "../middlewares/authMiddleWare.js";
 
@@ -25,5 +26,6 @@ router
   .put(protect, updateArticle)
   .delete(protect, deleteArticle);
 router.route("/:id/review").post(protect, addComment);
+router.get("/tag/:id", tagList);
 
 export default router;

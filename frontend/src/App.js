@@ -21,6 +21,14 @@ const App = () => {
         <Route path="/login" component={Login} />
         <Route path="/register" component={Register} />
         <Route path="/" component={Article} exact />
+
+        <Route path="/search/:keyword" component={Article} exact />
+        <Route path="/page/:pageNumber" component={Article} exact />
+        <Route
+          path="/search/:keyword/page/:pageNumber"
+          component={Article}
+          exact
+        />
         <Route path="/article/:id" exact component={ArtcileDetail} />
         <Route path="/article/:id/edit" exact component={ArticleUpdate} />
 

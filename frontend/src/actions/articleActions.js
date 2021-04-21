@@ -24,12 +24,15 @@ import {
   ARTICLE_DELETE_SUCCESS,
 } from "../constants/articleConstats";
 
-export const listArticle = () => async (dispatch) => {
+export const listArticle = (keyword = "", pageNumber = "") => async (
+  dispatch,
+) => {
   try {
     dispatch({ type: ARTICLE_LIST_REQUEST });
 
-    const { data } = await axios.get(`/api/articles`);
-
+    const { data } = await axios.get(
+      `/api/articles?keyword=${keyword}&pageNumber=${pageNumber}`,
+    );
     dispatch({ type: ARTICLE_LIST_SUCCESS, payload: data });
   } catch (error) {
     dispatch({

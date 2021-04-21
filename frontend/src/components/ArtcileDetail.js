@@ -9,6 +9,7 @@ import {
   Form,
   ListGroup,
   Row,
+  Accordion,
 } from "react-bootstrap";
 import Message from "../components/Message";
 import Loader from "../components/Loader";
@@ -141,8 +142,27 @@ const ArtcileDetail = ({ match, history }) => {
               <Card>
                 <Card.Img variant="top" src={article.feature_img} />
                 <Card.Body>
-                  <Card.Title>{article.title}</Card.Title>
-                  <Card.Text>{article.description}</Card.Text>
+                  <Card.Title>Title: {article.title}</Card.Title>
+                  <Card.Text>Description: {article.description}</Card.Text>
+                  <Accordion>
+                    <Card>
+                      <Card.Header>
+                        <Accordion.Toggle
+                          as={Button}
+                          variant="link"
+                          eventKey="0">
+                          Tags
+                        </Accordion.Toggle>
+                      </Card.Header>
+                      <Accordion.Collapse eventKey="0">
+                        <Card.Body>
+                          {article.tag.map((tag) => (
+                            <p>{tag}</p>
+                          ))}
+                        </Card.Body>
+                      </Accordion.Collapse>
+                    </Card>
+                  </Accordion>
                 </Card.Body>
               </Card>
             </Col>

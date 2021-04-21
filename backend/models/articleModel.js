@@ -44,10 +44,12 @@ const ArticleSchema = mongoose.Schema({
     type: Number,
     default: 0,
   },
-  tag: {
-    type: String,
-    default: "",
-  },
+  tag: [
+    {
+      type: String,
+      default: "",
+    },
+  ],
   author: {
     user: {
       type: mongoose.Schema.Types.ObjectId,

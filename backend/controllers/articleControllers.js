@@ -5,13 +5,15 @@ import fs from "fs";
 import cloudinary from "cloudinary";
 
 const addArticle = asyncHandler(async (req, res) => {
-  const { title, text, claps, description, feature_img, tag } = req.body;
+  const { title, text, claps, description, feature_img } = req.body;
 
   const user = await User.findById(req.user._id);
   const authore = {
     name: req.user.name,
     user: req.user._id,
   };
+
+  const tag = req.body.tag.split(" ");
   const article = new Article({
     title,
     text,
@@ -33,15 +35,32 @@ const addArticle = asyncHandler(async (req, res) => {
 });
 
 const getAllArticles = asyncHandler(async (req, res) => {
-  const article = await Article.find({});
+  const pageSize = 5;
+  const page = Number(req.query.pageNumber) || 1;
+
+  const keyword = req.query.keyword
+    ? {
+        name: {
+          $regex: req.query.keyword,
+          $options: "i",
+        },
+      }
+    : {};
+
+  console.log(keyword);
+
+  const count = await Article.countDocuments({ ...keyword });
+  const article = await Article.find({ ...keyword })
+    .limit(pageSize)
+    .skip(pageSize * (page - 1));
 
   if (article.length > 0) {
-    res.json(article);
+    res.json({ article, page, pages: Math.ceil(count / pageSize) });
   } else {
     res.status(404);
     throw new Error("No article found");
   }
-  res.json(article);
+  res.json({ article });
 });
 
 const getArticleById = asyncHandler(async (req, res) => {
@@ -58,7 +77,7 @@ const getArticleById = asyncHandler(async (req, res) => {
 });
 
 const updateArticle = asyncHandler(async (req, res) => {
-  const { title, text, claps, description, feature_img } = req.body;
+  const { title, text, claps, description, feature_img, tag } = req.body;
   const article = await Article.findById(req.params.id);
   const user = await User.findById(req.user._id);
 
@@ -71,6 +90,7 @@ const updateArticle = asyncHandler(async (req, res) => {
       article.text = text || article.text;
       article.description = description || article.description;
       article.feature_img = feature_img || article.feature_img;
+      article.tag = tag.split(" ") || article.tag;
     } else {
       res.status(404);
       throw new Error("Article not found");
@@ -139,6 +159,17 @@ const deleteArticle = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc    Get all tags
+// @route   GET /api/articles/tags
+// @access  Private
+const tagList = asyncHandler(async (req, res) => {
+  const article = await Article.findById(req.params.id).distinct("tag");
+
+  res.json(article);
+
+  console.log(article);
+});
+
 export {
   addArticle,
   getAllArticles,
@@ -147,4 +178,5 @@ export {
   addClap,
   addComment,
   updateArticle,
+  tagList,
 };

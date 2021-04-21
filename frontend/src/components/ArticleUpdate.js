@@ -18,6 +18,7 @@ const ArticleUpdate = ({ history, match }) => {
   const [description, setDescription] = useState("");
   const [feature_img, setFeatureImage] = useState("");
   const [uploading, setUploading] = useState(false);
+  const [tag, setTag] = useState("");
 
   const dispatch = useDispatch();
 
@@ -51,6 +52,7 @@ const ArticleUpdate = ({ history, match }) => {
       setText(article.text);
       setTitle(article.title);
       setDescription(article.description);
+      setTag(article.tag);
       setFeatureImage(article.feature_img);
     }
   }, [
@@ -60,6 +62,7 @@ const ArticleUpdate = ({ history, match }) => {
     article.text,
     article.description,
     article.feature_img,
+    article.tag,
     dispatch,
   ]);
   //               End Use Effect        //
@@ -95,6 +98,7 @@ const ArticleUpdate = ({ history, match }) => {
         text,
         title,
         description,
+        tag,
         feature_img,
       }),
     );
@@ -143,6 +147,14 @@ const ArticleUpdate = ({ history, match }) => {
                 value={text}
                 onChange={(e) => setText(e.target.value)}></Form.Control>
             </Form.Group>
+            <Form.Group controlId="tag">
+              <Form.Label>tag</Form.Label>
+              <Form.Control
+                type="tag"
+                placeholder="Enter tag"
+                value={tag}
+                onChange={(e) => setTag(e.target.value)}></Form.Control>
+            </Form.Group>
             <Form.Group controlId="featureImage">
               <Form.Label>featureImage</Form.Label>
               <Form.Control
@@ -168,6 +180,7 @@ const ArticleUpdate = ({ history, match }) => {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}></Form.Control>
             </Form.Group>
+
             <Button type="submit" variant="primary" onSubmit={submitHandler}>
               Submit
             </Button>

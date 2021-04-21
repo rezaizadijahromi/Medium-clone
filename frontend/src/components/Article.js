@@ -5,19 +5,31 @@ import { Col, Card, Container } from "react-bootstrap";
 import Message from "../components/Message";
 import Loader from "../components/Loader";
 import { listArticle } from "../actions/articleActions";
+import Paginate from "./Paginate";
 
-const Article = ({ article }) => {
+const Article = ({ article, match }) => {
+  const keyword = match.params.keyword;
+  const pageNumber = match.params.pageNumber || 1;
+
+  console.log(keyword);
   const dispatch = useDispatch();
   const articleList = useSelector((state) => state.articleList);
-  const { loading, articles, error } = articleList;
+  const { loading, articles, error, page, pages } = articleList;
   console.log(articles);
 
   useEffect(() => {
-    dispatch(listArticle());
-  }, [dispatch]);
+    dispatch(listArticle(keyword, pageNumber));
+  }, [dispatch, keyword, pageNumber]);
 
   return (
     <>
+      {!keyword ? (
+        ""
+      ) : (
+        <Link to="/" className="btn btn-light">
+          Go Back
+        </Link>
+      )}
       <Container>
         <h1>Latest Articles</h1>
         {loading ? (
@@ -45,6 +57,12 @@ const Article = ({ article }) => {
                 </Card>
               ))}
             </Col>
+
+            <Paginate
+              pages={pages}
+              page={page}
+              keyword={keyword ? keyword : ""}
+            />
           </>
         )}
       </Container>

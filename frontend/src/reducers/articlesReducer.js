@@ -30,7 +30,9 @@ export const articleListReducer = (state = { articles: [] }, action) => {
     case ARTICLE_LIST_SUCCESS:
       return {
         loading: false,
-        articles: action.payload,
+        articles: action.payload.article,
+        pages: action.payload.pages,
+        page: action.payload.page,
       };
     case ARTICLE_LIST_FAIL:
       return {
@@ -43,7 +45,7 @@ export const articleListReducer = (state = { articles: [] }, action) => {
 };
 
 export const articleDetailReducer = (
-  state = { article: { reviews: [], author: {} } },
+  state = { article: { reviews: [], author: {}, tag: [] } },
   action,
 ) => {
   switch (action.type) {
