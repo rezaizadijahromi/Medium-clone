@@ -5,7 +5,7 @@ import fs from "fs";
 import cloudinary from "cloudinary";
 
 const addArticle = asyncHandler(async (req, res) => {
-  const { title, text, claps, description, feature_img } = req.body;
+  const { title, text, claps, description, feature_img, tag } = req.body;
 
   const user = await User.findById(req.user._id);
   const authore = {
@@ -18,6 +18,7 @@ const addArticle = asyncHandler(async (req, res) => {
     claps,
     description,
     feature_img,
+    tag,
     author: authore,
   });
 

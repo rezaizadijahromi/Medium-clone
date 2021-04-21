@@ -116,6 +116,14 @@ const Profile = ({ location, history }) => {
   // end
   console.log(articles);
 
+  // Add article
+  const addArticleHandler = (e) => {
+    e.preventDefault();
+    history.push("/add");
+  };
+
+  // End
+
   return (
     <>
       <Col md={2} style={{ position: "absolute", top: "50%" }}>
@@ -135,6 +143,10 @@ const Profile = ({ location, history }) => {
             ))}
           </ListGroup.Item>
         </ListGroup>
+
+        <Button style={{ marginLeft: "75px" }} onClick={addArticleHandler}>
+          Add Article
+        </Button>
       </Col>
       <Container>
         <Col>

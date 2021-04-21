@@ -21,6 +21,7 @@ const ArticleCreate = ({ history }) => {
   const [description, setDescription] = useState("");
   const [feature_img, setFeatureImage] = useState("");
   const [uploading, setUploading] = useState(false);
+  const [tag, setTag] = useState("");
   const [editorState, setEditorState] = useState(() =>
     EditorState.createEmpty(),
   );
@@ -65,6 +66,7 @@ const ArticleCreate = ({ history }) => {
         title,
         description,
         feature_img,
+        tag,
       }),
     );
     dispatch({ type: "ARTICLE_CREATE_RESET" });
@@ -102,6 +104,14 @@ const ArticleCreate = ({ history }) => {
                 placeholder="Enter text"
                 value={text}
                 onChange={(e) => setText(e.target.value)}></Form.Control>
+            </Form.Group>
+            <Form.Group controlId="tag">
+              <Form.Label>tag</Form.Label>
+              <Form.Control
+                type="tag"
+                placeholder="Enter tag"
+                value={tag}
+                onChange={(e) => setTag(e.target.value)}></Form.Control>
             </Form.Group>
             <Form.Group controlId="featureImage">
               <Form.Label>featureImage</Form.Label>
