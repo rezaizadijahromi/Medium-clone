@@ -48,7 +48,7 @@ export const userLoginReducer = (state = {}, action) => {
   }
 };
 export const userProfileReducer = (
-  state = { user: { followers: [], following: [] } },
+  state = { user: { followers: [], following: [] }, articles: [] },
   action,
 ) => {
   switch (action.type) {
@@ -57,7 +57,8 @@ export const userProfileReducer = (
     case USER_PROFILE_SUCCESS:
       return {
         loading: false,
-        user: action.payload,
+        user: action.payload.user,
+        articles: action.payload.matches,
         userId: action.payload._id,
       };
     case USER_PROFILE_FAIL:

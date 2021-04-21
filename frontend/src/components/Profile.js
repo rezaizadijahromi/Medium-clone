@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from "react";
 import FollowCM from "./FollowCM";
-import { Form, Button, Row, Col, Container, Dropdown } from "react-bootstrap";
+import {
+  Form,
+  Button,
+  Row,
+  Col,
+  Container,
+  Dropdown,
+  ListGroup,
+} from "react-bootstrap";
 import axios from "axios";
 import { LinkContainer } from "react-router-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
@@ -15,8 +23,9 @@ import { USER_UPDATE_PROFILE_RESET } from "../constants/userConstants";
 const Profile = ({ location, history }) => {
   const userLogin = useSelector((state) => state.userLogin);
   const userProfile = useSelector((state) => state.userProfile);
-  const { loading, error, user } = userProfile;
+  const { loading, error, user, articles } = userProfile;
   const { userInfo } = userLogin;
+  console.log(articles);
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -40,7 +49,7 @@ const Profile = ({ location, history }) => {
         history.push("/profile");
         dispatch(getUserProfile("profile"));
 
-        dispatch({ type: USER_UPDATE_PROFILE_RESET });
+        // dispatch({ type: USER_UPDATE_PROFILE_RESET });
       } else {
         setName(user.name);
         setEmail(user.email);
@@ -99,144 +108,172 @@ const Profile = ({ location, history }) => {
     }
   };
 
+  //   Going into article
+  const articlesHandler = (e, articleId) => {
+    e.preventDefault();
+    history.push(`/article/${articleId}`);
+  };
+  // end
+  console.log(articles);
+
   return (
-    <Container>
-      <Col>
-        <h2>User Profile</h2>
-        {message && <Message variant="danger">{message}</Message>}
-        {}
-        {success && <Message variant="success">Profile Updated</Message>}
-        {loading ? (
-          <Loader />
-        ) : error ? (
-          <Message variant="danger">{error}</Message>
-        ) : (
-          <Form onSubmit={submitHandler}>
-            <Row>
-              <Col md={{ span: 0, offset: 1 }}>
-                <Dropdown>
-                  <Dropdown.Toggle variant="success" id="dropdown-basic">
-                    Followers
-                  </Dropdown.Toggle>
-
-                  <Dropdown.Menu>
-                    {user.followers.length > 0 ? (
-                      user.followers.map((userFollowers) => {
-                        return (
-                          <LinkContainer to={`profile/${userFollowers.user}`}>
-                            <Dropdown.Item key={userFollowers.user}>
-                              <Button
-                                onClick={() =>
-                                  userProfileHandler(userFollowers.user)
-                                }>
-                                {userFollowers.name}
-                              </Button>
-                            </Dropdown.Item>
-                          </LinkContainer>
-                        );
-                      })
-                    ) : (
-                      <Col>
-                        <Message>No Followers</Message>
-                      </Col>
-                    )}
-                  </Dropdown.Menu>
-                </Dropdown>
-              </Col>
-              <Col md={{ span: 2, offset: 5 }}>
-                <Dropdown>
-                  <Dropdown.Toggle variant="success" id="dropdown-basic">
-                    Following
-                  </Dropdown.Toggle>
-
-                  <Dropdown.Menu>
-                    {user.following.length > 0 ? (
-                      user.following.map((userFollowing) => {
-                        return (
-                          <LinkContainer to={`profile/${userFollowing.user}`}>
-                            <Dropdown.Item key={userFollowing.user}>
-                              <Button
-                                onClick={() =>
-                                  userProfileHandler(userFollowing.user)
-                                }>
-                                {userFollowing.name}
-                              </Button>
-                            </Dropdown.Item>
-                          </LinkContainer>
-                        );
-                      })
-                    ) : (
-                      <Col>
-                        <Message>You Follow No one</Message>
-                      </Col>
-                    )}
-                  </Dropdown.Menu>
-                </Dropdown>
-              </Col>
-            </Row>
-
-            <FollowCM image={image} />
-
-            <Form.Group controlId="name">
-              <Form.Label>Name</Form.Label>
-              <Form.Control
-                type="name"
-                placeholder="Enter name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}></Form.Control>
-            </Form.Group>
-
-            <Form.Group controlId="email">
-              <Form.Label>Email Address</Form.Label>
-              <Form.Control
-                type="email"
-                placeholder="Enter email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}></Form.Control>
-            </Form.Group>
-
-            <Form.Group controlId="password">
-              <Form.Label>Password</Form.Label>
-              <Form.Control
-                type="password"
-                placeholder="Enter password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}></Form.Control>
-            </Form.Group>
-
-            <Form.Group controlId="confirmPassword">
-              <Form.Label>Confirm Password</Form.Label>
-              <Form.Control
-                type="password"
-                placeholder="Confirm password"
-                value={confirmPassword}
-                onChange={(e) =>
-                  setConfirmPassword(e.target.value)
-                }></Form.Control>
-            </Form.Group>
-
-            <Form.Group controlId="image">
-              <Form.Label>Image</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Enter image url"
-                value={image}
-                onChange={(e) => setImage(e.target.value)}></Form.Control>
-              <Form.File
-                id="image-file"
-                label="Choose File"
-                custom
-                onChange={uploadFileHandler}></Form.File>
-              {uploading && <Loader />}
-            </Form.Group>
-
-            <Button type="submit" variant="primary">
-              Update
-            </Button>
-          </Form>
-        )}
+    <>
+      <Col md={2} style={{ position: "absolute", top: "50%" }}>
+        <ListGroup as="ul" variant="flush" block>
+          <ListGroup.Item as="li" active>
+            {user.name}'s Articles
+          </ListGroup.Item>
+          <ListGroup.Item as="li">
+            {articles.map((article) => (
+              <Button
+                block
+                className="mx-1"
+                variant="info"
+                onClick={(e) => articlesHandler(e, article._id)}>
+                {article.title}
+              </Button>
+            ))}
+          </ListGroup.Item>
+        </ListGroup>
       </Col>
-    </Container>
+      <Container>
+        <Col>
+          <h2>Profile</h2>
+          {message && <Message variant="danger">{message}</Message>}
+          {}
+          {success && <Message variant="success">Profile Updated</Message>}
+          {loading ? (
+            <Loader />
+          ) : error ? (
+            <Message variant="danger">{error}</Message>
+          ) : (
+            <Form onSubmit={submitHandler}>
+              <Row>
+                <Col md={{ span: 0, offset: 1 }}>
+                  <Dropdown>
+                    <Dropdown.Toggle variant="success" id="dropdown-basic">
+                      Followers
+                    </Dropdown.Toggle>
+
+                    <Dropdown.Menu>
+                      {user.followers.length > 0 ? (
+                        user.followers.map((userFollowers) => {
+                          return (
+                            <LinkContainer to={`profile/${userFollowers.user}`}>
+                              <Dropdown.Item key={userFollowers.user}>
+                                <Button
+                                  onClick={() =>
+                                    userProfileHandler(userFollowers.user)
+                                  }>
+                                  {userFollowers.name}
+                                </Button>
+                              </Dropdown.Item>
+                            </LinkContainer>
+                          );
+                        })
+                      ) : (
+                        <Col>
+                          <Message>No Followers</Message>
+                        </Col>
+                      )}
+                    </Dropdown.Menu>
+                  </Dropdown>
+                </Col>
+                <Col md={{ span: 2, offset: 5 }}>
+                  <Dropdown>
+                    <Dropdown.Toggle variant="success" id="dropdown-basic">
+                      Following
+                    </Dropdown.Toggle>
+
+                    <Dropdown.Menu>
+                      {user.following.length > 0 ? (
+                        user.following.map((userFollowing) => {
+                          return (
+                            <LinkContainer to={`profile/${userFollowing.user}`}>
+                              <Dropdown.Item key={userFollowing.user}>
+                                <Button
+                                  onClick={() =>
+                                    userProfileHandler(userFollowing.user)
+                                  }>
+                                  {userFollowing.name}
+                                </Button>
+                              </Dropdown.Item>
+                            </LinkContainer>
+                          );
+                        })
+                      ) : (
+                        <Col>
+                          <Message>You Follow No one</Message>
+                        </Col>
+                      )}
+                    </Dropdown.Menu>
+                  </Dropdown>
+                </Col>
+              </Row>
+
+              <FollowCM image={image} />
+
+              <Form.Group controlId="name">
+                <Form.Label>Name</Form.Label>
+                <Form.Control
+                  type="name"
+                  placeholder="Enter name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}></Form.Control>
+              </Form.Group>
+
+              <Form.Group controlId="email">
+                <Form.Label>Email Address</Form.Label>
+                <Form.Control
+                  type="email"
+                  placeholder="Enter email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}></Form.Control>
+              </Form.Group>
+
+              <Form.Group controlId="password">
+                <Form.Label>Password</Form.Label>
+                <Form.Control
+                  type="password"
+                  placeholder="Enter password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}></Form.Control>
+              </Form.Group>
+
+              <Form.Group controlId="confirmPassword">
+                <Form.Label>Confirm Password</Form.Label>
+                <Form.Control
+                  type="password"
+                  placeholder="Confirm password"
+                  value={confirmPassword}
+                  onChange={(e) =>
+                    setConfirmPassword(e.target.value)
+                  }></Form.Control>
+              </Form.Group>
+
+              <Form.Group controlId="image">
+                <Form.Label>Image</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Enter image url"
+                  value={image}
+                  onChange={(e) => setImage(e.target.value)}></Form.Control>
+                <Form.File
+                  id="image-file"
+                  label="Choose File"
+                  custom
+                  onChange={uploadFileHandler}></Form.File>
+                {uploading && <Loader />}
+              </Form.Group>
+
+              <Button type="submit" variant="primary">
+                Update
+              </Button>
+            </Form>
+          )}
+        </Col>
+      </Container>
+    </>
   );
 };
 

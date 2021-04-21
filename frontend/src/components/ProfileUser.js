@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from "react";
 import FollowCM from "./FollowCM";
-import { Button, Row, Col, Container, Dropdown, Card } from "react-bootstrap";
+import {
+  Button,
+  Row,
+  Col,
+  Container,
+  Dropdown,
+  Card,
+  ListGroup,
+} from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import Message from "../components/Message";
@@ -25,10 +33,10 @@ const ProfileUser = ({ location, history, match }) => {
   const dispatch = useDispatch();
 
   const userLogin = useSelector((state) => state.userLogin);
-  const { userInfo } = userLogin;
-
   const userProfile = useSelector((state) => state.userProfile);
-  const { loading, error, user } = userProfile;
+  const { loading, error, user, articles } = userProfile;
+  const { userInfo } = userLogin;
+  console.log(articles);
 
   const userUpdateProfile = useSelector((state) => state.userUpdateProfile);
   const { success } = userUpdateProfile;
@@ -40,6 +48,7 @@ const ProfileUser = ({ location, history, match }) => {
         dispatch(getUserProfile("profile"));
       } else {
         dispatch(getUserProfile(match.params.id));
+        console.log("Iam dispatching");
       }
     } else {
       setName(user.name);
@@ -62,7 +71,7 @@ const ProfileUser = ({ location, history, match }) => {
     }
   });
 
-  console.log("userFollowed", userFollowed);
+  console.log("userFollowed", user);
 
   // end follow //
 
@@ -88,106 +97,132 @@ const ProfileUser = ({ location, history, match }) => {
   };
   //          end profile handler         //
 
+  //   Going into article
+  const articlesHandler = (e, articleId) => {
+    e.preventDefault();
+    history.push(`/article/${articleId}`);
+  };
+  // end
   return (
-    <Container>
-      <Row>
-        <Col>
-          <h2>User Profile</h2>
-          {message && <Message variant="danger">{message}</Message>}
+    <>
+      <Col md={2} style={{ position: "absolute", top: "50%" }}>
+        <ListGroup as="ul" variant="flush" block>
+          <ListGroup.Item as="li" active>
+            {user.name}'s Articles
+          </ListGroup.Item>
+          <ListGroup.Item as="li">
+            {articles.map((article) => (
+              <Button
+                block
+                className="mx-1"
+                variant="info"
+                onClick={(e) => articlesHandler(e, article._id)}>
+                {article.title}
+              </Button>
+            ))}
+          </ListGroup.Item>
+        </ListGroup>
+      </Col>
+      <Container>
+        <Row>
+          <Col>
+            <h2>User Profile</h2>
+            {message && <Message variant="danger">{message}</Message>}
 
-          {success && <Message variant="success">Profile Updated</Message>}
-          {loading ? (
-            <Loader />
-          ) : error ? (
-            <Message variant="danger">{error}</Message>
-          ) : (
-            <Row>
-              <Col md={{ span: 0 }}>
-                <Button onClick={() => userFollowHandler(match.params.id)}>
-                  {user.followers.find(
-                    (usr) => usr.user.toString() === userInfo._id.toString(),
-                  )
-                    ? "UnFollow"
-                    : "Follow"}
-                </Button>
-              </Col>
+            {success && <Message variant="success">Profile Updated</Message>}
+            {loading ? (
+              <Loader />
+            ) : error ? (
+              <Message variant="danger">{error}</Message>
+            ) : (
+              <Row>
+                <Col md={{ span: 0 }}>
+                  <Button onClick={() => userFollowHandler(match.params.id)}>
+                    {user.followers.find(
+                      (usr) => usr.user.toString() === userInfo._id.toString(),
+                    )
+                      ? "UnFollow"
+                      : "Follow"}
+                  </Button>
+                </Col>
 
-              <Col md={{ span: 0, offset: 1 }}>
-                <Dropdown>
-                  <Dropdown.Toggle variant="success" id="dropdown-basic">
-                    Followers
-                  </Dropdown.Toggle>
+                <Col md={{ span: 0, offset: 1 }}>
+                  <Dropdown>
+                    <Dropdown.Toggle variant="success" id="dropdown-basic">
+                      Followers
+                    </Dropdown.Toggle>
 
-                  <Dropdown.Menu>
-                    {user.followers.length > 0 ? (
-                      user.followers.map((userFollowers) => {
-                        return (
-                          <LinkContainer to={`${userFollowers.user}`}>
-                            <Dropdown.Item key={userFollowers.user}>
-                              <Button
-                                onClick={() =>
-                                  userProfileHandler(userFollowers.user)
-                                }>
-                                {userFollowers.name}
-                              </Button>
-                            </Dropdown.Item>
-                          </LinkContainer>
-                        );
-                      })
-                    ) : (
-                      <Col>
-                        <Message>No Followers</Message>
-                      </Col>
-                    )}
-                  </Dropdown.Menu>
-                </Dropdown>
-              </Col>
-              <Col md={{ span: 2, offset: 5 }}>
-                <Dropdown>
-                  <Dropdown.Toggle variant="success" id="dropdown-basic">
-                    Following
-                  </Dropdown.Toggle>
+                    <Dropdown.Menu>
+                      {user.followers.length > 0 ? (
+                        user.followers.map((userFollowers) => {
+                          return (
+                            <LinkContainer to={`${userFollowers.user}`}>
+                              <Dropdown.Item key={userFollowers.user}>
+                                <Button
+                                  onClick={() =>
+                                    userProfileHandler(userFollowers.user)
+                                  }>
+                                  {userFollowers.name}
+                                </Button>
+                              </Dropdown.Item>
+                            </LinkContainer>
+                          );
+                        })
+                      ) : (
+                        <Col>
+                          <Message>No Followers</Message>
+                        </Col>
+                      )}
+                    </Dropdown.Menu>
+                  </Dropdown>
+                </Col>
+                <Col md={{ span: 2, offset: 5 }}>
+                  <Dropdown>
+                    <Dropdown.Toggle variant="success" id="dropdown-basic">
+                      Following
+                    </Dropdown.Toggle>
 
-                  <Dropdown.Menu>
-                    {user.following.length > 0 ? (
-                      user.following.map((userFollowing) => {
-                        return (
-                          <LinkContainer to={`${userFollowing.user}`}>
-                            <Dropdown.Item key={userFollowing.user}>
-                              <Button
-                                onClick={() =>
-                                  userProfileHandler(userFollowing.user)
-                                }>
-                                {userFollowing.name}
-                              </Button>
-                            </Dropdown.Item>
-                          </LinkContainer>
-                        );
-                      })
-                    ) : (
-                      <Col>
-                        <Message>You Follow No one</Message>
-                      </Col>
-                    )}
-                  </Dropdown.Menu>
-                </Dropdown>
-              </Col>
-            </Row>
-          )}
+                    <Dropdown.Menu>
+                      {user.following.length > 0 ? (
+                        user.following.map((userFollowing) => {
+                          return (
+                            <LinkContainer to={`${userFollowing.user}`}>
+                              <Dropdown.Item key={userFollowing.user}>
+                                <Button
+                                  onClick={() =>
+                                    userProfileHandler(userFollowing.user)
+                                  }>
+                                  {userFollowing.name}
+                                </Button>
+                              </Dropdown.Item>
+                            </LinkContainer>
+                          );
+                        })
+                      ) : (
+                        <Col>
+                          <Message>You Follow No one</Message>
+                        </Col>
+                      )}
+                    </Dropdown.Menu>
+                  </Dropdown>
+                </Col>
+              </Row>
+            )}
 
-          <Card>
-            <FollowCM image={image} />
-            <Card.Body>
-              <Card.Title>Name</Card.Title>
-              <Card.Text>{name}</Card.Text>
+            <Card>
+              <FollowCM image={image} />
+              <Card.Body>
+                <Card.Title>Name</Card.Title>
+                <Card.Text>{name}</Card.Text>
 
-              <Card.Title>Email</Card.Title>
-              <Card.Text>{email}</Card.Text>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
-    </Container>
+                <Card.Title>Email</Card.Title>
+                <Card.Text>{email}</Card.Text>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+      </Container>
+    </>
   );
 };
 
