@@ -40,10 +40,26 @@ const getAllArticles = asyncHandler(async (req, res) => {
 
   const keyword = req.query.keyword
     ? {
-        name: {
-          $regex: req.query.keyword,
-          $options: "i",
-        },
+        $or: [
+          {
+            title: {
+              $regex: req.query.keyword,
+              $options: "i",
+            },
+          },
+          {
+            tag: {
+              $regex: req.query.keyword,
+              $options: "i",
+            },
+          },
+          {
+            author: {
+              $regex: req.query.keyword,
+              $options: "i",
+            },
+          },
+        ],
       }
     : {};
 
