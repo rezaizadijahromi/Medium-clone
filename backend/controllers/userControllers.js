@@ -66,22 +66,40 @@ const loginUser = asyncHandler(async (req, res) => {
 // @access Public
 const getUserInfo = asyncHandler(async (req, res) => {
   const user = await User.findById(req.params.id);
+  const me = await User.findById(req.user._id);
   const article = await Article.find({});
+
+  const alreadyFollowed = me.following.find(
+    (r) => r.user._id.toString() === req.params.id.toString(),
+    console.log(req.params.id),
+  );
 
   const matches = [];
   if (user) {
-    const author_user = await article.find((article) => {
-      if (article.author.user.toString() === user._id.toString()) {
-        matches.push(article);
-      }
-    });
+    if (alreadyFollowed) {
+      const author_user = await article.find((article) => {
+        if (article.author.user.toString() === user._id.toString()) {
+          matches.push(article);
+        }
+      });
 
-    const data = { user, matches };
-    res.json(data);
+      const data = { user, matches };
+      res.json(data);
+    } else {
+      res.status(400);
+      throw new Error("You are not allow to see this user profile");
+    }
   } else {
     res.status(404);
     throw new Error("User not found");
   }
+});
+
+const testSocket = asyncHandler(async (req, res) => {
+  const socket = req.app.get("socketio");
+  const test = req.body.test;
+  socket.sockets.emit("message", console.log("reza"));
+  res.json(test);
 });
 
 // @desc Follow the user and when you follow user adds into your following and adds into that user followers
@@ -90,6 +108,8 @@ const getUserInfo = asyncHandler(async (req, res) => {
 const followUser = asyncHandler(async (req, res) => {
   const user = await User.findById(req.params.id);
   const userOwn = await User.findById(req.user._id);
+
+  const followingRequest = req.body.followingRequest;
 
   // console.log(req.user._id);
   // console.log(req.params.id);
@@ -108,21 +128,42 @@ const followUser = asyncHandler(async (req, res) => {
     //   res.status(400);
     //   throw new Error("Already follow this user");
     // }
-    if (!alreadyFollowed) {
-      const follower = {
-        user: req.user._id,
-        name: req.user.name,
-      };
-      const following = {
-        user: req.params.id,
-        name: user.name,
-      };
-      userOwn.following.push(following);
-      user.followers.push(follower);
 
-      await userOwn.save();
-      await user.save();
-      res.json("followed");
+    if (!alreadyFollowed) {
+      if (user.accountStatus === "Public") {
+        const follower = {
+          user: req.user._id,
+          name: req.user.name,
+        };
+        const following = {
+          user: req.params.id,
+          name: user.name,
+        };
+        userOwn.following.push(following);
+        user.followers.push(follower);
+
+        await userOwn.save();
+        await user.save();
+        res.json("followed");
+      } else {
+        if (followingRequest === "Active") {
+          const follower = {
+            user: req.user._id,
+            name: req.user.name,
+            followingRequest: "Active",
+          };
+          const following = {
+            user: req.params.id,
+            name: user.name,
+          };
+          userOwn.following.push(following);
+          user.followers.push(follower);
+
+          await userOwn.save();
+          await user.save();
+          res.json("followed");
+        }
+      }
     } else {
       const delUser = await user.followers.find((usr) => {
         return usr.user == userOwn.id;

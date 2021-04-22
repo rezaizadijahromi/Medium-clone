@@ -27,6 +27,11 @@ const FollowersSchema = mongoose.Schema(
     name: {
       type: String,
     },
+    followingRequest: {
+      type: String,
+      enum: ["Pending", "Active"],
+      default: "Pending",
+    },
   },
   {
     timestamps: true,
@@ -43,6 +48,12 @@ let UserSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  accountStatus: {
+    type: String,
+    enum: ["Private", "Public"],
+    default: "Private",
+  },
+
   followers: [FollowersSchema],
   following: [FollowingSchema],
 });
