@@ -53,6 +53,7 @@ let UserSchema = new mongoose.Schema({
     enum: ["Private", "Public"],
     default: "Private",
   },
+  notifications: [],
 
   followers: [FollowersSchema],
   following: [FollowingSchema],

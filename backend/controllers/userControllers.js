@@ -146,23 +146,57 @@ const followUser = asyncHandler(async (req, res) => {
         await user.save();
         res.json("followed");
       } else {
-        if (followingRequest === "Active") {
-          const follower = {
+        if (user.notifications == 0) {
+          const notif = {
             user: req.user._id,
             name: req.user.name,
-            followingRequest: "Active",
+            followingRequest: "Pending",
           };
-          const following = {
-            user: req.params.id,
-            name: user.name,
-          };
-          userOwn.following.push(following);
-          user.followers.push(follower);
+          user.notifications.push(notif);
 
-          await userOwn.save();
           await user.save();
-          res.json("followed");
+          res.json("Added to notifications list first");
+        } else {
+          const notif = {
+            user: req.user._id,
+            name: req.user.name,
+            followingRequest: "Pending",
+          };
+
+          // console.log(
+          //   "already request",
+          //   user.notifications.find(
+          //     (r) => r.user.toString() === notif.user.toString(),
+          //   ),
+          // );
+
+          const alreadyRequested = user.notifications.find(
+            (r) => r.user.toString() === notif.user.toString(),
+          );
+          if (alreadyRequested) {
+            res.status(400);
+            throw new Error("You already request");
+          } else {
+            user.notifications.push(notif);
+            await user.save();
+            res.json("Added to notifications list second");
+          }
         }
+
+        // const follower = {
+        //   user: req.user._id,
+        //   name: req.user.name,
+        //   followingRequest: "Active",
+        // };
+        // const following = {
+        //   user: req.params.id,
+        //   name: user.name,
+        // };
+        // userOwn.following.push(following);
+        // user.followers.push(follower);
+        // await userOwn.save();
+        // await user.save();
+        // res.json("followed");
       }
     } else {
       const delUser = await user.followers.find((usr) => {
@@ -188,6 +222,81 @@ const followUser = asyncHandler(async (req, res) => {
     res.status(404);
     throw new Error("Not found");
   }
+});
+
+// @desc    Get all Follow request
+// @route   GET /api/users/follow
+// @access  Private
+
+const getAllNotificationsHandler = asyncHandler(async (req, res) => {
+  const me = await User.findById(req.user._id);
+  const notifs = me.notifications;
+
+  res.json(notifs);
+});
+
+// @desc    Follow request
+// @route   POST /api/users/follow
+// @access  Private
+
+const notificationsHandler = asyncHandler(async (req, res) => {
+  const me = await User.findById(req.user._id);
+  const user = await User.findById(req.params.id);
+  const followRequest = req.body.followRequest;
+
+  const userExist = await me.notifications.find((usr) => {
+    return usr.user == req.params.id;
+  });
+
+  if (userExist) {
+    if (followRequest === "Active") {
+      const follower = {
+        user: req.user._id,
+        name: req.user.name,
+        followingRequest: "Active",
+      };
+      const following = {
+        user: req.params.id,
+        name: user.name,
+      };
+
+      const alreadyFollowed = me.following.find(
+        (r) => r.user._id.toString() === req.params.id.toString(),
+      );
+
+      if (!alreadyFollowed) {
+        me.following.push(following);
+        user.followers.push(follower);
+
+        // const delNotif = await me.notifications.find((usr) => {
+        //   return usr.user == req.params.id;
+        // });
+
+        // console.log(delNotif);
+        // await delNotif.remove();
+        await me.notifications.remove();
+
+        await me.save();
+        await user.save();
+
+        res.json("followed");
+      } else {
+        res.status(400);
+        throw new Error("Already followed");
+      }
+    }
+  } else {
+    res.status(404);
+    throw new Error("User does not exist");
+  }
+
+  // if (me.notifications.length > 0) {
+  //   for (let index = 0; index < me.notifications.length; index++) {
+  //     console.log(me.notifications[index]);
+  //   }
+  // }
+
+  res.json("Notification");
 });
 
 const unfollowUser = asyncHandler(async (req, res) => {
@@ -282,4 +391,6 @@ export {
   getUserInfo,
   unfollowUser,
   updateUserProfile,
+  notificationsHandler,
+  getAllNotificationsHandler,
 };
