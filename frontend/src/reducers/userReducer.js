@@ -31,6 +31,12 @@ import {
   USER_UNFOLLOW_FAIL,
   USER_UNFOLLOW_SUCCESS,
   USER_UNFOLLOW_REQUEST,
+  USER_GET_NOTIF_REQUEST,
+  USER_GET_NOTIF_SUCCESS,
+  USER_GET_NOTIF_FAIL,
+  USER_ACCEPT_NOTIF_REQUEST,
+  USER_ACCEPT_NOTIF_SUCCESS,
+  USER_ACCEPT_NOTIF_FAIL,
 } from "../constants/userConstants";
 
 export const userLoginReducer = (state = {}, action) => {
@@ -48,7 +54,10 @@ export const userLoginReducer = (state = {}, action) => {
   }
 };
 export const userProfileReducer = (
-  state = { user: { followers: [], following: [] }, articles: [] },
+  state = {
+    user: { followers: [], following: [], notifications: [] },
+    articles: [],
+  },
   action,
 ) => {
   switch (action.type) {
@@ -172,6 +181,35 @@ export const userUnFollowerReducer = (
     case USER_UNFOLLOW_SUCCESS:
       return { loading: false, success: true };
     case USER_UNFOLLOW_FAIL:
+      return { loading: false, error: action.payload };
+    default:
+      return state;
+  }
+};
+
+export const userNotifReducer = (
+  state = { user: {}, notifications: [] },
+  action,
+) => {
+  switch (action.type) {
+    case USER_GET_NOTIF_REQUEST:
+      return { loading: true };
+    case USER_GET_NOTIF_SUCCESS:
+      return { loading: false, notifications: action.payload };
+    case USER_GET_NOTIF_FAIL:
+      return { loading: false, error: action.payload };
+    default:
+      return state;
+  }
+};
+
+export const userAcceptNotifReducer = (state = { user: {} }, action) => {
+  switch (action.type) {
+    case USER_ACCEPT_NOTIF_REQUEST:
+      return { loading: true };
+    case USER_ACCEPT_NOTIF_SUCCESS:
+      return { loading: false, success: true };
+    case USER_ACCEPT_NOTIF_FAIL:
       return { loading: false, error: action.payload };
     default:
       return state;

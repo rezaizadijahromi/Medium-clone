@@ -15,7 +15,12 @@ import { useSelector, useDispatch } from "react-redux";
 import Message from "../components/Message";
 import Loader from "../components/Loader";
 
-import { getUserProfile, updateUserProfile } from "../actions/userActions";
+import {
+  getUserProfile,
+  updateUserProfile,
+  getUserNotif,
+  acceptNotif,
+} from "../actions/userActions";
 import { USER_UPDATE_PROFILE_RESET } from "../constants/userConstants";
 
 // we need to list user orders
@@ -38,10 +43,26 @@ const Profile = ({ location, history }) => {
   const dispatch = useDispatch();
 
   const userUpdateProfile = useSelector((state) => state.userUpdateProfile);
-
   const { success } = userUpdateProfile;
 
+  // get user notifications
+  const userNotif = useSelector((state) => state.userNotif);
+  const { loading: loadingNotif, error: errorNotif, notifications } = userNotif;
+
+  console.log(notifications);
+  // end
+
+  // accept user following request
+  const userAcceptNotif = useSelector((state) => state.userAcceptNotif);
+  const {
+    loading: loadingAccept,
+    error: errorAccept,
+    success: successAccept,
+  } = userAcceptNotif;
+  //
+
   useEffect(() => {
+    dispatch(getUserNotif());
     if (!userInfo) {
       history.push("/login");
     } else {
@@ -124,6 +145,14 @@ const Profile = ({ location, history }) => {
 
   // End
 
+  // notifications handler
+  const getNotificationHandler = (e, notifId) => {
+    e.preventDefault();
+    dispatch(acceptNotif(notifId, "Active"));
+    // window.location.reload();
+    // end
+  };
+
   return (
     <>
       <Col md={2} style={{ position: "absolute", top: "50%" }}>
@@ -147,6 +176,23 @@ const Profile = ({ location, history }) => {
         <Button style={{ marginLeft: "75px" }} onClick={addArticleHandler}>
           Add Article
         </Button>
+
+        <ListGroup as="ul" variant="flush" block className="my-3">
+          <ListGroup.Item as="li" active>
+            {user.name}'s Notifications
+          </ListGroup.Item>
+          <ListGroup.Item as="li">
+            {user.notifications.map((notif) => (
+              <Button
+                block
+                className="mx-1"
+                variant="info"
+                onClick={(e) => getNotificationHandler(e, notif.user)}>
+                {notif.name}
+              </Button>
+            ))}
+          </ListGroup.Item>
+        </ListGroup>
       </Col>
       <Container>
         <Col>

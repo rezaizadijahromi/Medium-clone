@@ -69,7 +69,7 @@ const getUserInfo = asyncHandler(async (req, res) => {
   const me = await User.findById(req.user._id);
   const article = await Article.find({});
 
-  const alreadyFollowed = me.following.find(
+  const alreadyFollowed = me.followers.find(
     (r) => r.user._id.toString() === req.params.id.toString(),
     console.log(req.params.id),
   );
@@ -249,45 +249,37 @@ const notificationsHandler = asyncHandler(async (req, res) => {
   });
 
   if (userExist) {
-    if (followRequest === "Active") {
-      const follower = {
-        user: req.user._id,
-        name: req.user.name,
-        followingRequest: "Active",
-      };
-      const following = {
-        user: req.params.id,
-        name: user.name,
-      };
+    const follower = {
+      user: req.user._id,
+      name: req.user.name,
+      followingRequest: "Active",
+    };
+    const following = {
+      user: req.params.id,
+      name: user.name,
+    };
 
-      const alreadyFollowed = me.following.find(
-        (r) => r.user._id.toString() === req.params.id.toString(),
-      );
+    const alreadyFollowed = me.following.find(
+      (r) => r.user._id.toString() === req.params.id.toString(),
+    );
 
-      if (!alreadyFollowed) {
-        me.following.push(following);
-        user.followers.push(follower);
-        await me.notifications.remove(userExist);
+    if (!alreadyFollowed) {
+      me.following.push(following);
+      user.followers.push(follower);
+      await me.notifications.remove(userExist);
 
-        await me.save();
-        await user.save();
+      await me.save();
+      await user.save();
 
-        res.json("followed");
-      } else {
-        res.status(400);
-        throw new Error("Already followed");
-      }
+      res.json("followed");
+    } else {
+      res.status(400);
+      throw new Error("Already followed");
     }
   } else {
     res.status(404);
     throw new Error("User does not exist");
   }
-
-  // if (me.notifications.length > 0) {
-  //   for (let index = 0; index < me.notifications.length; index++) {
-  //     console.log(me.notifications[index]);
-  //   }
-  // }
 
   res.json("Notification");
 });

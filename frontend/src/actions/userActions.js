@@ -19,6 +19,12 @@ import {
   USER_UNFOLLOW_FAIL,
   USER_UNFOLLOW_SUCCESS,
   USER_UNFOLLOW_REQUEST,
+  USER_GET_NOTIF_REQUEST,
+  USER_GET_NOTIF_SUCCESS,
+  USER_GET_NOTIF_FAIL,
+  USER_ACCEPT_NOTIF_FAIL,
+  USER_ACCEPT_NOTIF_REQUEST,
+  USER_ACCEPT_NOTIF_SUCCESS,
 } from "../constants/userConstants";
 export const login = (email, password) => async (dispatch) => {
   try {
@@ -241,6 +247,77 @@ export const UnfollowUser = (id) => async (dispatch, getState) => {
     }
     dispatch({
       type: USER_UNFOLLOW_FAIL,
+      payload: message,
+    });
+  }
+};
+
+export const getUserNotif = () => async (dispatch, getState) => {
+  try {
+    dispatch({ type: USER_GET_NOTIF_REQUEST });
+
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.get(`/api/users/notif`, config);
+
+    dispatch({ type: USER_GET_NOTIF_SUCCESS, payload: data });
+  } catch (error) {
+    const message =
+      error.response && error.response.data.message
+        ? error.response.data.message
+        : error.message;
+    if (message === "Not authorized, token failed") {
+      dispatch(logout());
+    }
+    dispatch({
+      type: USER_GET_NOTIF_FAIL,
+      payload: message,
+    });
+  }
+};
+
+export const acceptNotif = (id, followRequest) => async (
+  dispatch,
+  getState,
+) => {
+  try {
+    dispatch({ type: USER_ACCEPT_NOTIF_REQUEST });
+
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.post(
+      `/api/users/notif/${id}`,
+      followRequest,
+      config,
+    );
+
+    dispatch({ type: USER_ACCEPT_NOTIF_SUCCESS, payload: data });
+  } catch (error) {
+    const message =
+      error.response && error.response.data.message
+        ? error.response.data.message
+        : error.message;
+    if (message === "Not authorized, token failed") {
+      dispatch(logout());
+    }
+    dispatch({
+      type: USER_ACCEPT_NOTIF_FAIL,
       payload: message,
     });
   }

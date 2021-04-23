@@ -22,6 +22,8 @@ import {
   userUpdateReducer,
   userFollowerReducer,
   userUnFollowerReducer,
+  userNotifReducer,
+  userAcceptNotifReducer,
 } from "./reducers/userReducer";
 
 const reducer = combineReducers({
@@ -41,6 +43,8 @@ const reducer = combineReducers({
   userUpdate: userUpdateReducer,
   userFollower: userFollowerReducer,
   userUnFollower: userUnFollowerReducer,
+  userNotif: userNotifReducer,
+  userAcceptNotif: userAcceptNotifReducer,
 });
 
 const userInfoFromStorage = localStorage.getItem("userInfo")
