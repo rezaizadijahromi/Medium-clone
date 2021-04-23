@@ -25,6 +25,9 @@ import {
   USER_ACCEPT_NOTIF_FAIL,
   USER_ACCEPT_NOTIF_REQUEST,
   USER_ACCEPT_NOTIF_SUCCESS,
+  USER_DENIE_NOTIF_REQUEST,
+  USER_DENIE_NOTIF_SUCCESS,
+  USER_DENIE_NOTIF_FAIL,
 } from "../constants/userConstants";
 export const login = (email, password) => async (dispatch) => {
   try {
@@ -318,6 +321,42 @@ export const acceptNotif = (id, followRequest) => async (
     }
     dispatch({
       type: USER_ACCEPT_NOTIF_FAIL,
+      payload: message,
+    });
+  }
+};
+
+export const denieNotif = (id) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: USER_DENIE_NOTIF_REQUEST });
+
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.delete(
+      `/api/users/notif/${id}`,
+
+      config,
+    );
+
+    dispatch({ type: USER_DENIE_NOTIF_SUCCESS, payload: data });
+  } catch (error) {
+    const message =
+      error.response && error.response.data.message
+        ? error.response.data.message
+        : error.message;
+    if (message === "Not authorized, token failed") {
+      dispatch(logout());
+    }
+    dispatch({
+      type: USER_DENIE_NOTIF_FAIL,
       payload: message,
     });
   }

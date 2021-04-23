@@ -37,6 +37,9 @@ import {
   USER_ACCEPT_NOTIF_REQUEST,
   USER_ACCEPT_NOTIF_SUCCESS,
   USER_ACCEPT_NOTIF_FAIL,
+  USER_DENIE_NOTIF_REQUEST,
+  USER_DENIE_NOTIF_SUCCESS,
+  USER_DENIE_NOTIF_FAIL,
 } from "../constants/userConstants";
 
 export const userLoginReducer = (state = {}, action) => {
@@ -210,6 +213,19 @@ export const userAcceptNotifReducer = (state = { user: {} }, action) => {
     case USER_ACCEPT_NOTIF_SUCCESS:
       return { loading: false, success: true };
     case USER_ACCEPT_NOTIF_FAIL:
+      return { loading: false, error: action.payload };
+    default:
+      return state;
+  }
+};
+
+export const userDenieNotifReducer = (state = { user: {} }, action) => {
+  switch (action.type) {
+    case USER_DENIE_NOTIF_REQUEST:
+      return { loading: true };
+    case USER_DENIE_NOTIF_SUCCESS:
+      return { loading: false, success: true };
+    case USER_DENIE_NOTIF_FAIL:
       return { loading: false, error: action.payload };
     default:
       return state;

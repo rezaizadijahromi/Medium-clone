@@ -20,6 +20,7 @@ import {
   updateUserProfile,
   getUserNotif,
   acceptNotif,
+  denieNotif,
 } from "../actions/userActions";
 import { USER_UPDATE_PROFILE_RESET } from "../constants/userConstants";
 
@@ -61,14 +62,23 @@ const Profile = ({ location, history }) => {
   } = userAcceptNotif;
   //
 
+  // denie user following request
+  const userDenieNotif = useSelector((state) => state.userDenieNotif);
+  const {
+    loading: loadingDenie,
+    error: errorDenie,
+    success: successDenie,
+  } = userAcceptNotif;
+  //
+
   useEffect(() => {
-    dispatch(getUserNotif());
     if (!userInfo) {
       history.push("/login");
     } else {
-      if (!user || !user.name || success) {
+      if (!user || !user.name || success || successAccept || successDenie) {
         history.push("/profile");
         dispatch(getUserProfile("profile"));
+        dispatch(getUserNotif());
 
         // dispatch({ type: USER_UPDATE_PROFILE_RESET });
       } else {
@@ -77,7 +87,7 @@ const Profile = ({ location, history }) => {
         setImage(user.image);
       }
     }
-  }, [dispatch, history, userInfo, user, success]);
+  }, [dispatch, history, userInfo, user, success, successAccept, successDenie]);
 
   const submitHandler = (e) => {
     e.preventDefault();
@@ -146,12 +156,19 @@ const Profile = ({ location, history }) => {
   // End
 
   // notifications handler
-  const getNotificationHandler = (e, notifId) => {
+  const acceptNotificationHandler = (e, notifId) => {
     e.preventDefault();
     dispatch(acceptNotif(notifId, "Active"));
     // window.location.reload();
-    // end
   };
+  // end
+
+  // denie the following request
+  const denieNotificationHandler = (e, notifId) => {
+    e.preventDefault();
+    dispatch(denieNotif(notifId));
+  };
+  // end
 
   return (
     <>
@@ -183,13 +200,23 @@ const Profile = ({ location, history }) => {
           </ListGroup.Item>
           <ListGroup.Item as="li">
             {user.notifications.map((notif) => (
-              <Button
-                block
-                className="mx-1"
-                variant="info"
-                onClick={(e) => getNotificationHandler(e, notif.user)}>
-                {notif.name}
-              </Button>
+              <Row>
+                <Col block>
+                  {notif.name}
+                  <Button
+                    className="mx-1"
+                    variant="info"
+                    onClick={(e) => acceptNotificationHandler(e, notif.user)}>
+                    <i class="fas fa-check-square"></i>
+                  </Button>
+                  <Button
+                    className="mx-1"
+                    variant="info"
+                    onClick={(e) => denieNotificationHandler(e, notif.user)}>
+                    <i class="fas fa-trash"></i>
+                  </Button>
+                </Col>
+              </Row>
             ))}
           </ListGroup.Item>
         </ListGroup>

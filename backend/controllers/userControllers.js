@@ -146,42 +146,53 @@ const followUser = asyncHandler(async (req, res) => {
         await user.save();
         res.json("followed");
       } else {
-        if (user.notifications == 0) {
-          const notif = {
-            user: req.user._id,
-            name: req.user.name,
-            followingRequest: "Pending",
-          };
+        const notif = {
+          user: req.user._id,
+          name: req.user.name,
+          followingRequest: "Pending",
+        };
+
+        const alreadyFollowed = user.notifications.find(
+          (r) => r.user.toString() === notif.user.toString(),
+        );
+
+        const alreadyRequested = user.following.find(
+          (r) => r.user.toString() === notif.user.toString(),
+        );
+
+        if (alreadyRequested || alreadyFollowed) {
+          res.status(400);
+          throw new Error("You already submit your request or followed user");
+        } else {
           user.notifications.push(notif);
 
           await user.save();
-          res.json("Added to notifications list first");
-        } else {
-          const notif = {
-            user: req.user._id,
-            name: req.user.name,
-            followingRequest: "Pending",
-          };
-
-          // console.log(
-          //   "already request",
-          //   user.notifications.find(
-          //     (r) => r.user.toString() === notif.user.toString(),
-          //   ),
-          // );
-
-          const alreadyRequested = user.notifications.find(
-            (r) => r.user.toString() === notif.user.toString(),
-          );
-          if (alreadyRequested) {
-            res.status(400);
-            throw new Error("You already request");
-          } else {
-            user.notifications.push(notif);
-            await user.save();
-            res.json("Added to notifications list second");
-          }
+          res.json("Added to notifications list ");
         }
+        //  else {
+
+        //   const notif = {
+        //     user: req.user._id,
+        //     name: req.user.name,
+        //     followingRequest: "Pending",
+        //   };
+
+        //   const alreadyFollowed = user.notifications.find(
+        //     (r) => r.user.toString() === notif.user.toString(),
+        //   );
+
+        //   const alreadyRequested = user.followers.find(
+        //     (r) => r.user.toString() === req.params.id.toString(),
+        //   );
+        //   if (alreadyRequested) {
+        //     res.status(400);
+        //     throw new Error("You already request");
+        //   } else {
+        //     user.notifications.push(notif);
+        //     await user.save();
+        //     res.json("Added to notifications list second");
+        //   }
+        // }
 
         // const follower = {
         //   user: req.user._id,
@@ -239,7 +250,7 @@ const getAllNotificationsHandler = asyncHandler(async (req, res) => {
 // @route   POST /api/users/follow
 // @access  Private
 
-const notificationsHandler = asyncHandler(async (req, res) => {
+const acceptNotificationsHandler = asyncHandler(async (req, res) => {
   const me = await User.findById(req.user._id);
   const user = await User.findById(req.params.id);
   const followRequest = req.body.followRequest;
@@ -282,6 +293,28 @@ const notificationsHandler = asyncHandler(async (req, res) => {
   }
 
   res.json("Notification");
+});
+
+const delNotificationsHandler = asyncHandler(async (req, res) => {
+  const me = await User.findById(req.user._id);
+
+  console.log("del notif");
+
+  const userExist = await me.notifications.find((usr) => {
+    return usr.user == req.params.id;
+  });
+
+  console.log(userExist);
+
+  if (userExist) {
+    await me.notifications.remove(userExist);
+    await me.save();
+
+    res.json("Notification Removed");
+  } else {
+    res.status(404);
+    throw new Error("User does not exist");
+  }
 });
 
 const unfollowUser = asyncHandler(async (req, res) => {
@@ -376,6 +409,7 @@ export {
   getUserInfo,
   unfollowUser,
   updateUserProfile,
-  notificationsHandler,
+  acceptNotificationsHandler,
   getAllNotificationsHandler,
+  delNotificationsHandler,
 };
