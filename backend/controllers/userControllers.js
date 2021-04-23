@@ -267,14 +267,7 @@ const notificationsHandler = asyncHandler(async (req, res) => {
       if (!alreadyFollowed) {
         me.following.push(following);
         user.followers.push(follower);
-
-        // const delNotif = await me.notifications.find((usr) => {
-        //   return usr.user == req.params.id;
-        // });
-
-        // console.log(delNotif);
-        // await delNotif.remove();
-        await me.notifications.remove();
+        await me.notifications.remove(userExist);
 
         await me.save();
         await user.save();
