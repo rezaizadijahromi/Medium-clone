@@ -28,6 +28,7 @@ import {
   USER_DENIE_NOTIF_REQUEST,
   USER_DENIE_NOTIF_SUCCESS,
   USER_DENIE_NOTIF_FAIL,
+  USER_UPDATE_PROFILE_FAIL,
 } from "../constants/userConstants";
 export const login = (email, password) => async (dispatch) => {
   try {
@@ -140,7 +141,7 @@ export const getUserProfile = (id) => async (dispatch, getState) => {
         ? error.response.data.message
         : error.message;
     if (message === "Not authorized, token failed") {
-      dispatch(logout());
+      // dispatch(logout());
     }
     dispatch({
       type: USER_PROFILE_FAIL,
@@ -168,12 +169,12 @@ export const updateUserProfile = (user) => async (dispatch, getState) => {
 
     dispatch({ type: USER_UPDATE_PROFILE_SUCCESS, payload: data });
 
-    dispatch({
-      type: USER_LOGIN_SUCCESS,
-      payload: data,
-    });
+    // dispatch({
+    //   type: USER_LOGIN_SUCCESS,
+    //   payload: data,
+    // });
 
-    localStorage.setItem("userInfo", JSON.stringify(data));
+    // localStorage.setItem("userInfo", JSON.stringify(data));
   } catch (error) {
     const message =
       error.response && error.response.data.message
@@ -183,7 +184,7 @@ export const updateUserProfile = (user) => async (dispatch, getState) => {
       dispatch(logout());
     }
     dispatch({
-      type: USER_PROFILE_FAIL,
+      type: USER_UPDATE_PROFILE_FAIL,
       payload: message,
     });
   }

@@ -384,7 +384,15 @@ const getUserProfile = asyncHandler(async (req, res) => {
 // @access Private
 
 const updateUserProfile = asyncHandler(async (req, res) => {
-  const { name, email, password, image, followers, following } = req.body;
+  const {
+    name,
+    email,
+    password,
+    image,
+    followers,
+    following,
+    accountStatus,
+  } = req.body;
   const user = await User.findById(req.user._id);
 
   if (user) {
@@ -394,6 +402,7 @@ const updateUserProfile = asyncHandler(async (req, res) => {
     user.image = image || user.image;
     user.followers = followers || user.followers;
     user.following = following || user.following;
+    user.accountStatus = accountStatus || user.accountStatus;
   }
 
   const userUpdated = await user.save();

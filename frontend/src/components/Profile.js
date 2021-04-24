@@ -8,6 +8,7 @@ import {
   Container,
   Dropdown,
   ListGroup,
+  FormControl,
 } from "react-bootstrap";
 import axios from "axios";
 import { LinkContainer } from "react-router-bootstrap";
@@ -40,6 +41,7 @@ const Profile = ({ location, history }) => {
   const [message, setMessage] = useState("");
   const [image, setImage] = useState("");
   const [uploading, setUploading] = useState(false);
+  const [accountStatus, setAccountStatus] = useState("Private");
 
   const dispatch = useDispatch();
 
@@ -82,7 +84,7 @@ const Profile = ({ location, history }) => {
           dispatch(getUserNotif());
         }
 
-        // dispatch({ type: USER_UPDATE_PROFILE_RESET });
+        dispatch({ type: USER_UPDATE_PROFILE_RESET });
       } else {
         setName(user.name);
         setEmail(user.email);
@@ -97,7 +99,14 @@ const Profile = ({ location, history }) => {
       setMessage("Passwords do not match");
     } else {
       dispatch(
-        updateUserProfile({ id: user._id, name, email, password, image }),
+        updateUserProfile({
+          id: user._id,
+          name,
+          email,
+          password,
+          image,
+          accountStatus,
+        }),
       );
     }
   };
@@ -335,6 +344,24 @@ const Profile = ({ location, history }) => {
                   onChange={(e) =>
                     setConfirmPassword(e.target.value)
                   }></Form.Control>
+              </Form.Group>
+
+              <Form.Group inline>
+                <label>AccountStatus</label>
+                <Form.Check
+                  type="radio"
+                  label="Public"
+                  checked={accountStatus === "Public"}
+                  value="Public"
+                  onClick={() => setAccountStatus("Public")}
+                />
+                <Form.Check
+                  type="radio"
+                  label="Private"
+                  checked={accountStatus === "Private"}
+                  value="Private"
+                  onClick={() => setAccountStatus("Private")}
+                />
               </Form.Group>
 
               <Form.Group controlId="image">
