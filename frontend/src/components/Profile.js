@@ -80,9 +80,7 @@ const Profile = ({ location, history }) => {
       if (!user || !user.name || success) {
         history.push("/profile");
         dispatch(getUserProfile("profile"));
-        if (successAccept || successDenie) {
-          dispatch(getUserNotif());
-        }
+        dispatch(getUserNotif());
 
         dispatch({ type: USER_UPDATE_PROFILE_RESET });
       } else {
