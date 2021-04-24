@@ -75,10 +75,12 @@ const Profile = ({ location, history }) => {
     if (!userInfo) {
       history.push("/login");
     } else {
-      if (!user || !user.name || success || successAccept || successDenie) {
+      if (!user || !user.name || success) {
         history.push("/profile");
         dispatch(getUserProfile("profile"));
-        dispatch(getUserNotif());
+        if (successAccept || successDenie) {
+          dispatch(getUserNotif());
+        }
 
         // dispatch({ type: USER_UPDATE_PROFILE_RESET });
       } else {
@@ -128,14 +130,13 @@ const Profile = ({ location, history }) => {
       history.push("/profile");
       window.location.reload();
     } else {
+      dispatch(getUserProfile(userId));
       console.log("not Handler profile");
       let followed = user.followers.find(
         (usr) => usr.user.toString() === userId.toString(),
       );
 
       console.log("4", followed);
-
-      dispatch(getUserProfile(userId));
     }
   };
 

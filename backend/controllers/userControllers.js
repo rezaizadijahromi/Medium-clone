@@ -69,7 +69,7 @@ const getUserInfo = asyncHandler(async (req, res) => {
   const me = await User.findById(req.user._id);
   const article = await Article.find({});
 
-  const alreadyFollowed = me.followers.find(
+  const alreadyFollowed = me.following.find(
     (r) => r.user._id.toString() === req.params.id.toString(),
     console.log(req.params.id),
   );
@@ -156,7 +156,7 @@ const followUser = asyncHandler(async (req, res) => {
           (r) => r.user.toString() === notif.user.toString(),
         );
 
-        const alreadyRequested = user.following.find(
+        const alreadyRequested = user.followers.find(
           (r) => r.user.toString() === notif.user.toString(),
         );
 

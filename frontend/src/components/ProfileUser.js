@@ -78,10 +78,10 @@ const ProfileUser = ({ location, history, match }) => {
 
   //      Follow and UnFollow        //
   const userFollowHandler = (userId) => {
-    dispatch({ type: USER_UPDATE_PROFILE_RESET });
+    // dispatch({ type: USER_UPDATE_PROFILE_RESET });
     dispatch(followUser(userId));
     history.push(`/profile/${match.params.id}`);
-    window.location.reload();
+    // window.location.reload();
   };
   //          end follow and unfollow           //
 
@@ -103,26 +103,38 @@ const ProfileUser = ({ location, history, match }) => {
   // end
   return (
     <>
-      <Col md={2} style={{ position: "absolute", top: "50%" }}>
-        <ListGroup as="ul" variant="flush" block>
-          <ListGroup.Item as="li" active>
-            {user.name}'s Articles
-          </ListGroup.Item>
-          <ListGroup.Item as="li">
-            {articles.length > 0
-              ? articles.map((article) => (
-                  <Button
-                    block
-                    className="mx-1"
-                    variant="info"
-                    onClick={(e) => articlesHandler(e, article._id)}>
-                    {article.title}
-                  </Button>
-                ))
-              : "No Article"}
-          </ListGroup.Item>
-        </ListGroup>
-      </Col>
+      {loading ? (
+        <Loader />
+      ) : error ? (
+        <Container>
+          <Message variant="danger">{error}</Message>
+          <Button onClick={() => userFollowHandler(match.params.id)}>
+            Send Following Request
+          </Button>
+        </Container>
+      ) : (
+        <Col md={2} style={{ position: "absolute", top: "50%" }}>
+          <ListGroup as="ul" variant="flush" block>
+            <ListGroup.Item as="li" active>
+              {user.name}'s Articles
+            </ListGroup.Item>
+            <ListGroup.Item as="li">
+              {articles.length > 0
+                ? articles.map((article) => (
+                    <Button
+                      block
+                      className="mx-1"
+                      variant="info"
+                      onClick={(e) => articlesHandler(e, article._id)}>
+                      {article.title}
+                    </Button>
+                  ))
+                : "No Article"}
+            </ListGroup.Item>
+          </ListGroup>
+        </Col>
+      )}
+
       <Container>
         <Row>
           <Col>
@@ -133,8 +145,9 @@ const ProfileUser = ({ location, history, match }) => {
             {loading ? (
               <Loader />
             ) : error ? (
-              <Message variant="danger">{error}</Message>
+              ""
             ) : (
+              // <Message variant="danger">{error}</Message>
               <Row>
                 <Col md={{ span: 0 }}>
                   <Button onClick={() => userFollowHandler(match.params.id)}>
