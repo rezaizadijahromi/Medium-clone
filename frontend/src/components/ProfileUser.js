@@ -151,7 +151,7 @@ const ProfileUser = ({ location, history, match }) => {
               <Row>
                 <Col md={{ span: 0 }}>
                   <Button onClick={() => userFollowHandler(match.params.id)}>
-                    {user.followers.find(
+                    {user.following.find(
                       (usr) => usr.user.toString() === userInfo._id.toString(),
                     )
                       ? "UnFollow"
