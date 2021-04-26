@@ -41,7 +41,10 @@ const FollowersSchema = mongoose.Schema(
 let UserSchema = new mongoose.Schema({
   name: String,
   email: String,
-  password: String,
+  password: {
+    type: String,
+    minLength: 8,
+  },
   token: String,
   image: String,
   idAdmin: {
