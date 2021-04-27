@@ -12,11 +12,13 @@ import ProfileUser from "./components/ProfileUser";
 
 import ArticleCreate from "./components/ArticleCreate";
 import ArticleUpdate from "./components/ArticleUpdate";
+import Test from "./components/Test";
 
 const App = () => {
   return (
     <Router>
       <Header />
+      <Route path="/test" component={Test} />
       <main className="py-3">
         <Route path="/login" component={Login} />
         <Route path="/register" component={Register} />

@@ -11,8 +11,10 @@ import http from "http";
 import { Server } from "socket.io";
 import cors from "cors";
 
-dotenv.config();
+import router from "./router.js";
+import { addUser, removeUser, getUser, getUsersInRoom } from "./users.js";
 
+dotenv.config();
 connectDB();
 
 const app = express();
@@ -25,12 +27,12 @@ const io = new Server(server, {
   },
 });
 app.use(cors());
+app.use(router);
 
-//routers//
 app.use("/api/articles", articleRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/upload", uploadRoutes);
-app.use("/", testRoutes);
+app.use("/api/test", testRoutes);
 
 const __dirname = path.resolve();
 app.use("/uploads", express.static(path.join(__dirname, "/uploads")));
@@ -42,35 +44,6 @@ app.use(errorHandler);
 app.set("socketio", io);
 console.log("Socket.io listening for connections");
 
-io.on("connect", (socket) => {
-  console.log("connected");
-});
+const PORT = 5000;
 
-const PORT = process.env.PORT || 5000;
-
-app.listen(
-  PORT,
-  console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`),
-);
-
-// Authenticate before establishing a socket connection
-// io.use((socket, next) => {
-//   const token = socket.handshake.query.token;
-//   if (token) {
-//     try {
-//       const user = jwt.decode(token, process.env.JWT_SECRET);
-//       if (!user) {
-//         return next(new Error("Not authorized."));
-//       }
-//       socket.user = user;
-//       return next();
-//     } catch (err) {
-//       next(err);
-//     }
-//   } else {
-//     return next(new Error("Not authorized."));
-//   }
-// }).on("connection", (socket) => {
-//   socket.join(socket.user.id);
-//   console.log("socket connected:", socket.id);
-// });
+server.listen(PORT, console.log(`Server running  on port ${PORT}`));
