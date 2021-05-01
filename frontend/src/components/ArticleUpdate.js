@@ -15,11 +15,9 @@ import axios from "axios";
 import "../index.css";
 
 //editor
-import { io } from "socket.io-client";
 import Quill from "quill";
 import "quill/dist/quill.snow.css";
 
-const SAVE_INTERVAL_MS = 2000;
 const TOOLBAR_OPTIONS = [
   [{ header: [1, 2, 3, 4, 5, 6, false] }],
   [{ font: [] }],
@@ -50,20 +48,12 @@ const ArticleUpdate = ({ history, match }) => {
   console.log(article);
 
   const articleUpdate = useSelector((state) => state.articleUpdate);
-  const {
-    loading: loadingUpdate,
-    error: errorUpdate,
-    success: successUpdate,
-  } = articleUpdate;
+  const { loading: loadingUpdate, error: errorUpdate } = articleUpdate;
 
   //               Start delete           //
 
   const articleDelete = useSelector((state) => state.articleDelete);
-  const {
-    loading: loadingDelete,
-    error: errorDelete,
-    success: successDelete,
-  } = articleDelete;
+  const { loading: loadingDelete } = articleDelete;
 
   //               End delete           //
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Form, Button } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import Message from "../components/Message";
@@ -33,7 +33,6 @@ const TOOLBAR_OPTIONS = [
 const ArticleCreate = ({ history, match }) => {
   const [text, setText] = useState("");
   const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
   const [feature_img, setFeatureImage] = useState("");
   const [uploading, setUploading] = useState(false);
   const [tag, setTag] = useState("");

@@ -8,7 +8,6 @@ import {
   Container,
   Dropdown,
   ListGroup,
-  FormControl,
 } from "react-bootstrap";
 import axios from "axios";
 import { LinkContainer } from "react-router-bootstrap";
@@ -57,20 +56,12 @@ const Profile = ({ location, history }) => {
 
   // accept user following request
   const userAcceptNotif = useSelector((state) => state.userAcceptNotif);
-  const {
-    loading: loadingAccept,
-    error: errorAccept,
-    success: successAccept,
-  } = userAcceptNotif;
+  const { success: successAccept } = userAcceptNotif;
   //
 
   // denie user following request
   const userDenieNotif = useSelector((state) => state.userDenieNotif);
-  const {
-    loading: loadingDenie,
-    error: errorDenie,
-    success: successDenie,
-  } = userAcceptNotif;
+  const { success: successDenie } = userDenieNotif;
   //
 
   useEffect(() => {

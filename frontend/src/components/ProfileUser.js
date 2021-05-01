@@ -14,12 +14,7 @@ import { useSelector, useDispatch } from "react-redux";
 import Message from "../components/Message";
 import Loader from "../components/Loader";
 
-import {
-  getUserProfile,
-  followUser,
-  updateUserProfile,
-} from "../actions/userActions";
-import { USER_UPDATE_PROFILE_RESET } from "../constants/userConstants";
+import { getUserProfile, followUser } from "../actions/userActions";
 
 // we need to list user orders
 

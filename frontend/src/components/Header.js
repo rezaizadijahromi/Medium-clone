@@ -6,8 +6,6 @@ import { logout } from "../actions/userActions";
 import { Route } from "react-router";
 import SearchBox from "./SearchBox";
 
-import { v4 as uuidV4 } from "uuid";
-
 const Header = () => {
   const dispatch = useDispatch();
 
