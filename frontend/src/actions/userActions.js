@@ -362,3 +362,36 @@ export const denieNotif = (id) => async (dispatch, getState) => {
     });
   }
 };
+
+export const sendNotif = (id) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: "USER_SEND_REQUEST" });
+
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    console.log(userInfo);
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.post(`/api/test/notif/${id}`, {}, config);
+
+    dispatch({ type: "USER_SEND_SUCCESS", payload: data });
+  } catch (error) {
+    const message =
+      error.response && error.response.data.message
+        ? error.response.data.message
+        : error.message;
+    if (message === "Not authorized, token failed") {
+    }
+    dispatch({
+      type: "USER_SEND_FAIL",
+      payload: message,
+    });
+  }
+};

@@ -6,6 +6,8 @@ import { logout } from "../actions/userActions";
 import { Route } from "react-router";
 import SearchBox from "./SearchBox";
 
+import { v4 as uuidV4 } from "uuid";
+
 const Header = () => {
   const dispatch = useDispatch();
 
@@ -28,7 +30,7 @@ const Header = () => {
             <Route render={({ history }) => <SearchBox history={history} />} />
             <Nav className="ml-auto">
               {userInfo ? (
-                <LinkContainer to="/add">
+                <LinkContainer to={`/add/${uuidV4()}`}>
                   <Nav.Link>
                     <i className="far fa-newspaper"></i> Add Article
                   </Nav.Link>

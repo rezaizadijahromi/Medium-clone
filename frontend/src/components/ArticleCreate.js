@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect, useCallback } from "react";
+import { Link, useParams } from "react-router-dom";
 import { Form, Button } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import Message from "../components/Message";
@@ -8,32 +8,121 @@ import FormContainer from "../components/FormContainer";
 import { createArticle } from "../actions/articleActions";
 import axios from "axios";
 
+import "../index.css";
+
 //editor
-import Editor from "draft-js-plugins-editor";
-import { EditorState, RichUtils } from "draft-js";
-import "draft-js/dist/Draft.css";
+import { io } from "socket.io-client";
+import Quill from "quill";
+import "quill/dist/quill.snow.css";
+
+const SAVE_INTERVAL_MS = 2000;
+const TOOLBAR_OPTIONS = [
+  [{ header: [1, 2, 3, 4, 5, 6, false] }],
+  [{ font: [] }],
+  [{ list: "ordered" }, { list: "bullet" }],
+  ["bold", "italic", "underline"],
+  [{ color: [] }, { background: [] }],
+  [{ script: "sub" }, { script: "super" }],
+  [{ align: [] }],
+  ["image", "blockquote", "code-block"],
+  ["clean"],
+];
 
 // end
 
-const ArticleCreate = ({ history }) => {
+const ArticleCreate = ({ history, match }) => {
   const [text, setText] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [feature_img, setFeatureImage] = useState("");
   const [uploading, setUploading] = useState(false);
   const [tag, setTag] = useState("");
-  const [editorState, setEditorState] = useState(() =>
-    EditorState.createEmpty(),
-  );
-  const editor = React.useRef(null);
-  function focusEditor() {
-    editor.current.focus();
-  }
+  const [socket, setSocket] = useState();
+  const [quill, setQuill] = useState();
 
   const dispatch = useDispatch();
-
   const articleCreate = useSelector((state) => state.articleCreate);
   const { loading, error, article, success } = articleCreate;
+
+  // connect socket io
+  useEffect(() => {
+    const s = io("http://localhost:5000");
+    setSocket(s);
+    console.log(s);
+
+    return () => {
+      s.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (socket == null || quill == null) return;
+
+    socket.once("load-document", (document) => {
+      quill.setContents(document);
+      quill.enable();
+    });
+
+    socket.emit("get-document", match.params.id);
+  }, [socket, quill, match]);
+
+  useEffect(() => {
+    if (socket == null || quill == null) return;
+
+    const interval = setInterval(() => {
+      socket.emit("save-document", quill.getContents());
+    }, SAVE_INTERVAL_MS);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [socket, quill]);
+
+  useEffect(() => {
+    if (socket == null || quill == null) return;
+
+    const handler = (delta) => {
+      quill.updateContents(delta);
+    };
+    socket.on("receive-changes", handler);
+
+    return () => {
+      socket.off("receive-changes", handler);
+    };
+  }, [socket, quill]);
+
+  useEffect(() => {
+    if (socket == null || quill == null) return;
+
+    const handler = (delta, oldDelta, source) => {
+      if (source !== "user") return;
+      socket.emit("send-changes", delta);
+    };
+    quill.on("text-change", handler);
+
+    return () => {
+      quill.off("text-change", handler);
+    };
+  }, [socket, quill]);
+
+  // end socket io useEffect
+
+  // Callbacl function
+  const wrapperRef = useCallback((wrapper) => {
+    if (wrapper == null) return;
+
+    wrapper.innerHTML = "";
+    const editor = document.createElement("div");
+    wrapper.append(editor);
+    const q = new Quill(editor, {
+      theme: "snow",
+      modules: { toolbar: TOOLBAR_OPTIONS },
+    });
+    q.disable();
+    q.setText("Loading...");
+    setQuill(q);
+  }, []);
+  // End callback
 
   //           Start upload file handler    ///
   const uploadFileHandler = async (e) => {
@@ -61,13 +150,16 @@ const ArticleCreate = ({ history }) => {
   const submitHandler = (e) => {
     e.preventDefault();
     dispatch(
-      createArticle({
-        text,
-        title,
-        description,
-        feature_img,
-        tag,
-      }),
+      createArticle(
+        {
+          text,
+          title,
+          description,
+          feature_img,
+          tag,
+        },
+        match.params.id,
+      ),
     );
     dispatch({ type: "ARTICLE_CREATE_RESET" });
     history.push("/");
@@ -130,13 +222,7 @@ const ArticleCreate = ({ history }) => {
               {uploading && <Loader />}
             </Form.Group>
             <Form.Group controlId="description">
-              <Form.Label>Description</Form.Label>
-
-              <Form.Control
-                type="text"
-                placeholder="Enter description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}></Form.Control>
+              <div className="container" ref={wrapperRef}></div>
             </Form.Group>
             <Button type="submit" variant="primary" onSubmit={submitHandler}>
               Submit
@@ -149,84 +235,3 @@ const ArticleCreate = ({ history }) => {
 };
 
 export default ArticleCreate;
-
-// // adding functions to editor
-
-// const onChange = (editorState) => {
-//     setEditorState(editorState);
-//   };
-
-//   const handleKeyCommand = (command) => {
-//     const newState = RichUtils.handleKeyCommand(editorState, command);
-//     if (newState) {
-//       onChange(newState);
-//       return "handled";
-//     }
-//     return "not-handled";
-//   };
-
-//   const onUnderlineClick = (e) => {
-//     e.preventDefault();
-//     onChange(RichUtils.toggleInlineStyle(editorState, "UNDERLINE"));
-//   };
-
-//   const onBoldClick = (e) => {
-//     e.preventDefault();
-//     onChange(() => RichUtils.toggleInlineStyle(editorState, "BOLD"));
-//   };
-
-//   const onItalicClick = (e) => {
-//     e.preventDefault();
-//     onChange(() => RichUtils.toggleInlineStyle(editorState, "ITALIC"));
-//   };
-
-//   const onStrikeThroughClick = (e) => {
-//     e.preventDefault();
-//     onChange(() => RichUtils.toggleInlineStyle(editorState, "STRIKETHROUGH"));
-//   };
-
-//   const onHighlight = (e) => {
-//     e.preventDefault();
-//     onChange(() => RichUtils.toggleInlineStyle(editorState, "HIGHLIGHT"));
-//   };
-//   // end of functions
-
-// <Form.Group>
-//                 <div className="editorContainer">
-//                   <button className="underline" onClick={onUnderlineClick}>
-//                     U
-//                   </button>
-//                   <button className="bold" onClick={onBoldClick}>
-//                     <b>B</b>
-//                   </button>
-//                   <button className="italic" onClick={onItalicClick}>
-//                     <em>I</em>
-//                   </button>
-//                   <button
-//                     className="strikethrough"
-//                     onClick={onStrikeThroughClick}>
-//                     abc
-//                   </button>
-//                   <button className="highlight" onClick={onHighlight}>
-//                     <span style={{ background: "yellow", padding: "0.3em" }}>
-//                       H
-//                     </span>
-//                   </button>
-//                 </div>
-//                 <div
-//                   style={{
-//                     border: "1px solid black",
-//                     minHeight: "6em",
-//                     cursor: "text",
-//                   }}
-//                   onClick={focusEditor}>
-//                   <Editor
-//                     ref={editor}
-//                     editorState={editorState}
-//                     onChange={onChange}
-//                     handleKeyCommand={handleKeyCommand}
-//                     placeholder="Write something!"
-//                     value={editorState}
-//                   />
-//                 </div>
-//               </Form.Group>

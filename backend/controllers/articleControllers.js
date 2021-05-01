@@ -23,10 +23,10 @@ const addArticle = asyncHandler(async (req, res) => {
     tag,
     author: authore,
   });
-
+  console.log("Article", article);
   if (article) {
     const newArticle = await article.save();
-    // console.log(newArticle);
+    console.log(newArticle);
     res.status(201).json(newArticle);
   } else {
     res.status(400);

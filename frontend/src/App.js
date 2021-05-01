@@ -12,13 +12,12 @@ import ProfileUser from "./components/ProfileUser";
 
 import ArticleCreate from "./components/ArticleCreate";
 import ArticleUpdate from "./components/ArticleUpdate";
-import Test from "./components/Test";
 
 const App = () => {
   return (
     <Router>
       <Header />
-      <Route path="/test" component={Test} />
+
       <main className="py-3">
         <Route path="/login" component={Login} />
         <Route path="/register" component={Register} />
@@ -34,7 +33,7 @@ const App = () => {
         <Route path="/article/:id" exact component={ArtcileDetail} />
         <Route path="/article/:id/edit" exact component={ArticleUpdate} />
 
-        <Route path="/add" component={ArticleCreate} />
+        <Route path="/add/:id" component={ArticleCreate} />
         <Route path="/profile" component={Profile} exact />
         <Route path="/profile/:id" component={ProfileUser} exact />
 
