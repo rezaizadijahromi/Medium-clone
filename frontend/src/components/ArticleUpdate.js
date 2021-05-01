@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { Form, Button } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
@@ -12,6 +12,28 @@ import {
 } from "../actions/articleActions";
 import axios from "axios";
 
+import "../index.css";
+
+//editor
+import { io } from "socket.io-client";
+import Quill from "quill";
+import "quill/dist/quill.snow.css";
+
+const SAVE_INTERVAL_MS = 2000;
+const TOOLBAR_OPTIONS = [
+  [{ header: [1, 2, 3, 4, 5, 6, false] }],
+  [{ font: [] }],
+  [{ list: "ordered" }, { list: "bullet" }],
+  ["bold", "italic", "underline"],
+  [{ color: [] }, { background: [] }],
+  [{ script: "sub" }, { script: "super" }],
+  [{ align: [] }],
+  ["image", "blockquote", "code-block"],
+  ["clean"],
+];
+
+// end
+
 const ArticleUpdate = ({ history, match }) => {
   const [text, setText] = useState("");
   const [title, setTitle] = useState("");
@@ -19,6 +41,7 @@ const ArticleUpdate = ({ history, match }) => {
   const [feature_img, setFeatureImage] = useState("");
   const [uploading, setUploading] = useState(false);
   const [tag, setTag] = useState("");
+  const [quill, setQuill] = useState();
 
   const dispatch = useDispatch();
 
@@ -91,6 +114,8 @@ const ArticleUpdate = ({ history, match }) => {
 
   //           Start submit handler    ///
   const submitHandler = (e) => {
+    const description = quill.getContents();
+
     e.preventDefault();
     dispatch(
       updateArticle({
@@ -115,6 +140,22 @@ const ArticleUpdate = ({ history, match }) => {
     window.location.reload();
   };
   //           End delete handler           //
+
+  // Callbacl function
+  const wrapperRef = useCallback((wrapper) => {
+    if (wrapper == null) return;
+
+    wrapper.innerHTML = "";
+    const editor = document.createElement("div");
+    wrapper.append(editor);
+    const q = new Quill(editor, {
+      theme: "snow",
+      modules: { toolbar: TOOLBAR_OPTIONS },
+    });
+
+    setQuill(q);
+  }, []);
+  // End callback
 
   return (
     <>
@@ -172,13 +213,7 @@ const ArticleUpdate = ({ history, match }) => {
               {uploading && <Loader />}
             </Form.Group>
             <Form.Group controlId="description">
-              <Form.Label>Description</Form.Label>
-
-              <Form.Control
-                type="text"
-                placeholder="Enter description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}></Form.Control>
+              <div className="container" ref={wrapperRef}></div>
             </Form.Group>
 
             <Button type="submit" variant="primary" onSubmit={submitHandler}>

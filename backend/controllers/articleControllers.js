@@ -100,7 +100,7 @@ const updateArticle = asyncHandler(async (req, res) => {
     if (article) {
       article.title = title || article.title;
       article.text = text || article.text;
-      article.description = description || article.description;
+      article.description = description.ops || article.description.ops;
       article.feature_img = feature_img || article.feature_img;
       article.tag = tag.split(" ") || article.tag;
     } else {
