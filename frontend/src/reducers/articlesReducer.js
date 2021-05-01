@@ -45,7 +45,7 @@ export const articleListReducer = (state = { articles: [] }, action) => {
 };
 
 export const articleDetailReducer = (
-  state = { article: { reviews: [], author: {}, tag: [] } },
+  state = { article: { reviews: [], author: {}, tag: [], description: [] } },
   action,
 ) => {
   switch (action.type) {

@@ -15,9 +15,6 @@ const addArticle = asyncHandler(async (req, res) => {
     user: req.user._id,
   };
 
-  const quilli = req.body.quilli;
-  console.log(quilli);
-
   const tag = req.body.tag.split(" ");
   const article = new Article({
     title,

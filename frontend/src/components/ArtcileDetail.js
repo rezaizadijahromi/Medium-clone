@@ -21,12 +21,11 @@ import {
 
 import Rating from "./Rating";
 import { followUser, getUserProfile } from "../actions/userActions";
-import { USER_UPDATE_PROFILE_RESET } from "../constants/userConstants";
 
 const ArtcileDetail = ({ match, history }) => {
   const articleDetail = useSelector((state) => state.articleDetail);
 
-  const { loading, article, error, authorUser, authorName } = articleDetail;
+  const { article, error, authorUser } = articleDetail;
 
   console.log(authorUser);
 
@@ -55,7 +54,6 @@ const ArtcileDetail = ({ match, history }) => {
     loading: loadingProfile,
     error: errorProfile,
     user: userProfilee,
-    userId,
   } = userProfile;
 
   //      End user profile        //
@@ -103,6 +101,8 @@ const ArtcileDetail = ({ match, history }) => {
     console.log(userProfilee);
   };
 
+  console.log(article);
+
   // if the author is the user can edit the article
 
   return (
@@ -143,7 +143,20 @@ const ArtcileDetail = ({ match, history }) => {
                 <Card.Img variant="top" src={article.feature_img} />
                 <Card.Body>
                   <Card.Title>Title: {article.title}</Card.Title>
-                  <Card.Text>Description: {article.description}</Card.Text>
+                  <Card.Text>
+                    Description:
+                    {article.description.map((desc) => {
+                      return (
+                        <p>
+                          {desc.insert.image ? (
+                            <Card.Img src={desc.insert.image} />
+                          ) : (
+                            desc.insert
+                          )}
+                        </p>
+                      );
+                    })}
+                  </Card.Text>
                   <Accordion>
                     <Card>
                       <Card.Header>
