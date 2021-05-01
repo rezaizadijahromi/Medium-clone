@@ -42,7 +42,7 @@ const ArticleCreate = ({ history, match }) => {
 
   const dispatch = useDispatch();
   const articleCreate = useSelector((state) => state.articleCreate);
-  const { loading, error, article, success } = articleCreate;
+  const { loading, error } = articleCreate;
 
   // connect socket io
   useEffect(() => {
@@ -63,8 +63,8 @@ const ArticleCreate = ({ history, match }) => {
       quill.enable();
     });
 
-    socket.emit("get-document", match.params.id);
-  }, [socket, quill, match]);
+    socket.emit("get-document", socket.id);
+  }, [socket, quill]);
 
   useEffect(() => {
     if (socket == null || quill == null) return;
@@ -148,20 +148,18 @@ const ArticleCreate = ({ history, match }) => {
 
   //           Start submit handler    ///
   const submitHandler = (e) => {
+    const description = quill.getContents();
     e.preventDefault();
     dispatch(
-      createArticle(
-        {
-          text,
-          title,
-          description,
-          feature_img,
-          tag,
-        },
-        match.params.id,
-      ),
+      createArticle({
+        text,
+        title,
+        description,
+        feature_img,
+        tag,
+      }),
     );
-    dispatch({ type: "ARTICLE_CREATE_RESET" });
+
     history.push("/");
   };
   //           End submit handler    ///

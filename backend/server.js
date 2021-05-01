@@ -37,8 +37,6 @@ io.on("connection", (socket) => {
     socket.join(socket.id);
     socket.emit("load-document", document.data);
 
-    console.log("Document in server", document);
-
     socket.on("send-changes", (delta) => {
       socket.broadcast.to(socket.id).emit("receive-changes", delta);
     });

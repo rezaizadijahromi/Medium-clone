@@ -33,7 +33,7 @@ const App = () => {
         <Route path="/article/:id" exact component={ArtcileDetail} />
         <Route path="/article/:id/edit" exact component={ArticleUpdate} />
 
-        <Route path="/add/:id" component={ArticleCreate} />
+        <Route path="/add" component={ArticleCreate} />
         <Route path="/profile" component={Profile} exact />
         <Route path="/profile/:id" component={ProfileUser} exact />
 

@@ -35,7 +35,10 @@ const reviewSchema = mongoose.Schema(
 const ArticleSchema = mongoose.Schema({
   text: String,
   title: String,
-  description: String,
+  description: {
+    type: Object,
+    default: "",
+  },
   feature_img: {
     type: String,
     default: "",

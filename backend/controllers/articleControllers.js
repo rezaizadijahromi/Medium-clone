@@ -7,23 +7,27 @@ import cloudinary from "cloudinary";
 const addArticle = asyncHandler(async (req, res) => {
   const { title, text, claps, description, feature_img } = req.body;
 
+  console.log();
+
   const user = await User.findById(req.user._id);
   const authore = {
     name: req.user.name,
     user: req.user._id,
   };
 
+  const quilli = req.body.quilli;
+  console.log(quilli);
+
   const tag = req.body.tag.split(" ");
   const article = new Article({
     title,
     text,
     claps,
-    description,
+    description: description.ops,
     feature_img,
     tag,
     author: authore,
   });
-  console.log("Article", article);
   if (article) {
     const newArticle = await article.save();
     console.log(newArticle);
@@ -63,8 +67,6 @@ const getAllArticles = asyncHandler(async (req, res) => {
       }
     : {};
 
-  console.log(keyword);
-
   const count = await Article.countDocuments({ ...keyword });
   const article = await Article.find({ ...keyword })
     .limit(pageSize)
@@ -97,9 +99,6 @@ const updateArticle = asyncHandler(async (req, res) => {
   const article = await Article.findById(req.params.id);
   const user = await User.findById(req.user._id);
 
-  console.log(user._id);
-  console.log(article.author.user);
-
   if (user._id.toString() === article.author.user.toString()) {
     if (article) {
       article.title = title || article.title;
@@ -123,7 +122,6 @@ const updateArticle = asyncHandler(async (req, res) => {
 const addClap = asyncHandler(async (req, res) => {
   const article = await Article.findById(req.params.id);
   if (article) {
-    console.log(article);
     await article.clap();
     res.json(article);
   } else {
@@ -145,7 +143,6 @@ const addComment = asyncHandler(async (req, res) => {
       user: req.user._id,
     };
 
-    console.log(article);
     article.reviews.push(review);
     await article.save();
     res.status(201).json({ message: "comment added" });
@@ -182,8 +179,6 @@ const tagList = asyncHandler(async (req, res) => {
   const article = await Article.findById(req.params.id).distinct("tag");
 
   res.json(article);
-
-  console.log(article);
 });
 
 export {

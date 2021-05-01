@@ -30,7 +30,7 @@ const Header = () => {
             <Route render={({ history }) => <SearchBox history={history} />} />
             <Nav className="ml-auto">
               {userInfo ? (
-                <LinkContainer to={`/add/${uuidV4()}`}>
+                <LinkContainer to={`/add`}>
                   <Nav.Link>
                     <i className="far fa-newspaper"></i> Add Article
                   </Nav.Link>
