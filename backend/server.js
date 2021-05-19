@@ -56,17 +56,24 @@ io.on("connection", (socket) => {
       nameUser,
       idUserOwn,
     );
-    console.log(userId);
-    console.log(success);
+
+    console.log("socket id", socket.id);
+    userId = userId.toString();
+    socket.join(userId);
 
     if (success) {
       socket.emit("newRequest");
       console.log("here in emit to user");
 
-      io.to(userId).emit("newRequestRecieve", {
+      // io.to(userId).emit("newRequestRecieve", {
+      //   userOwnId,
+      //   username,
+      // });
+      socket.to(userId).emit("newRequestRecieve", {
         userOwnId,
         username,
       });
+      console.log("recive server");
     }
   });
 });

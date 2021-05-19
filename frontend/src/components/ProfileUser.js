@@ -58,6 +58,7 @@ const ProfileUser = ({ location, history, match }) => {
   // start follow //
   useEffect(() => {
     socket.current = io("http://localhost:5000");
+    console.log(socket.current);
   });
   // end follow //
 
@@ -65,12 +66,14 @@ const ProfileUser = ({ location, history, match }) => {
     e.preventDefault();
 
     if (socket.current) {
-      console.log(socket.current);
       socket.current.emit("newFollower", {
         idUser: match.params.id,
         nameUser: userInfo.name,
         idUserOwn: userInfo._id,
       });
+
+      dispatch(followUser(match.params.id));
+      history.push(`/profile/${match.params.id}`);
     }
   };
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import FollowCM from "./FollowCM";
 import {
   Form,
@@ -14,6 +14,7 @@ import { LinkContainer } from "react-router-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import Message from "../components/Message";
 import Loader from "../components/Loader";
+import { RequestFollow } from "./Toaster";
 
 import {
   getUserProfile,
@@ -23,6 +24,9 @@ import {
   denieNotif,
 } from "../actions/userActions";
 import { USER_UPDATE_PROFILE_RESET } from "../constants/userConstants";
+
+import io from "socket.io-client";
+let socket;
 
 // we need to list user orders
 
@@ -53,6 +57,11 @@ const Profile = ({ location, history }) => {
 
   console.log(notifications);
   // end
+
+  // add toastify and socket
+  const [showToastr, setShowToastr] = useState(false);
+
+  // end toastify
 
   // accept user following request
   const userAcceptNotif = useSelector((state) => state.userAcceptNotif);
@@ -169,6 +178,23 @@ const Profile = ({ location, history }) => {
   };
   // end
 
+  // add socket io logic for getting notification
+  useEffect(() => {
+    socket = io("http://localhost:5000");
+
+    console.log(socket);
+
+    if (socket) {
+      console.log("here");
+      socket.on("newRequestRecieve", () => {
+        setShowToastr(true);
+        console.log("reciving data");
+      });
+    }
+  });
+
+  // end
+
   return (
     <>
       <Col md={2} style={{ position: "absolute", top: "50%" }}>
@@ -192,6 +218,8 @@ const Profile = ({ location, history }) => {
         <Button style={{ marginLeft: "75px" }} onClick={addArticleHandler}>
           Add Article
         </Button>
+
+        {showToastr && <RequestFollow />}
 
         <ListGroup as="ul" variant="flush" block className="my-3">
           <ListGroup.Item as="li" active>

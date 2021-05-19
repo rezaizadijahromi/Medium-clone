@@ -361,15 +361,8 @@ const getUserProfile = asyncHandler(async (req, res) => {
 // @access Private
 
 const updateUserProfile = asyncHandler(async (req, res) => {
-  const {
-    name,
-    email,
-    password,
-    image,
-    followers,
-    following,
-    accountStatus,
-  } = req.body;
+  const { name, email, password, image, followers, following, accountStatus } =
+    req.body;
   const user = await User.findById(req.user._id);
 
   if (user) {
