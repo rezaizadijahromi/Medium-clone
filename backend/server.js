@@ -48,14 +48,20 @@ io.on("connection", (socket) => {
   });
 
   socket.on("newFollower", async ({ idUser, nameUser, idUserOwn }) => {
+    console.log("idUser", idUser);
+    console.log("nameUser", nameUser);
+    console.log("idUserOwn", idUserOwn);
     const { success, userId, userOwnId, username } = await newFollowerRequest(
       idUser,
       nameUser,
       idUserOwn,
     );
+    console.log(userId);
+    console.log(success);
 
     if (success) {
       socket.emit("newRequest");
+      console.log("here in emit to user");
 
       io.to(userId).emit("newRequestRecieve", {
         userOwnId,
