@@ -50,6 +50,7 @@ const ArticleCreate = ({ history, match }) => {
     console.log(s);
 
     return () => {
+      console.log("disconnect");
       s.disconnect();
     };
   }, []);

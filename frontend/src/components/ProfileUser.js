@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import FollowCM from "./FollowCM";
 import {
   Button,
@@ -13,6 +13,7 @@ import { LinkContainer } from "react-router-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import Message from "../components/Message";
 import Loader from "../components/Loader";
+import io from "socket.io-client";
 
 import { getUserProfile, followUser } from "../actions/userActions";
 
@@ -30,10 +31,10 @@ const ProfileUser = ({ location, history, match }) => {
   const userLogin = useSelector((state) => state.userLogin);
   const userProfile = useSelector((state) => state.userProfile);
   const { loading, error, user, articles } = userProfile;
-  console.log("User 1", user);
   const { userInfo } = userLogin;
-  console.log(userInfo);
-  console.log(articles);
+  // socket
+  const socket = useRef();
+  // end socket
 
   const userUpdateProfile = useSelector((state) => state.userUpdateProfile);
   const { success } = userUpdateProfile;
@@ -45,7 +46,6 @@ const ProfileUser = ({ location, history, match }) => {
         dispatch(getUserProfile("profile"));
       } else {
         dispatch(getUserProfile(match.params.id));
-        console.log("Iam dispatching");
       }
     } else {
       setName(user.name);
@@ -56,21 +56,23 @@ const ProfileUser = ({ location, history, match }) => {
   //               End userEffect           ///
 
   // start follow //
-
-  // let followed = userInfo.following.map(
-  //   (usr) => usr.user.toString() === match.params.id.toString(),
-  // );
-
-  // let userFollowed = false;
-  // followed.forEach((element) => {
-  //   if (element === true) {
-  //     return (userFollowed = element);
-  //   }
-  // });
-
-  // console.log("userFollowed", userFollowed);
-
+  useEffect(() => {
+    socket.current = io("http://localhost:5000");
+  });
   // end follow //
+
+  const userFollowRealTime = (e) => {
+    e.preventDefault();
+
+    if (socket.current) {
+      console.log(socket.current);
+      socket.current.emit("newFollower", {
+        idUser: match.params.id,
+        nameUser: userInfo.name,
+        idUserOwn: userInfo._id,
+      });
+    }
+  };
 
   //      Follow and UnFollow        //
   const userFollowHandler = (userId) => {
@@ -106,6 +108,10 @@ const ProfileUser = ({ location, history, match }) => {
           <Message variant="danger">{error}</Message>
           <Button onClick={() => userFollowHandler(match.params.id)}>
             Send Following Request
+          </Button>
+
+          <Button onClick={userFollowRealTime}>
+            Send Following Request RealTime
           </Button>
         </Container>
       ) : (
