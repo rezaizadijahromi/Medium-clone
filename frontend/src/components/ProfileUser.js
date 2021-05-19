@@ -32,6 +32,7 @@ const ProfileUser = ({ location, history, match }) => {
   const { loading, error, user, articles } = userProfile;
   console.log("User 1", user);
   const { userInfo } = userLogin;
+  console.log(userInfo);
   console.log(articles);
 
   const userUpdateProfile = useSelector((state) => state.userUpdateProfile);
@@ -56,18 +57,18 @@ const ProfileUser = ({ location, history, match }) => {
 
   // start follow //
 
-  let followed = userInfo.following.map(
-    (usr) => usr.user.toString() === match.params.id.toString(),
-  );
+  // let followed = userInfo.following.map(
+  //   (usr) => usr.user.toString() === match.params.id.toString(),
+  // );
 
-  let userFollowed = false;
-  followed.forEach((element) => {
-    if (element === true) {
-      return (userFollowed = element);
-    }
-  });
+  // let userFollowed = false;
+  // followed.forEach((element) => {
+  //   if (element === true) {
+  //     return (userFollowed = element);
+  //   }
+  // });
 
-  console.log("userFollowed", userFollowed);
+  // console.log("userFollowed", userFollowed);
 
   // end follow //
 

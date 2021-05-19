@@ -14,6 +14,7 @@ import router from "./router.js";
 import { addUser, removeUser, getUser, getUsersInRoom } from "./users.js";
 import Article from "./models/articleModel.js";
 import Document from "./Document.js";
+import { newFollowerRequest } from "./utils/notificatoins.js";
 
 dotenv.config();
 connectDB();
@@ -44,6 +45,20 @@ io.on("connection", (socket) => {
     socket.on("save-document", async (data) => {
       await Document.findByIdAndUpdate(socket.id, { data });
     });
+  });
+
+  socket.on("newFollower", async ({ idUser, nameUser, idUserOwn }) => {
+    const { success, userId, userOwnId, username, error } =
+      await newFollowerRequest(idUser, nameUser, idUserOwn);
+
+    if (success) {
+      socket.emit("newRequest");
+
+      io.to(userId).emit("newRequestRecieve", {
+        userOwnId,
+        username,
+      });
+    }
   });
 });
 
