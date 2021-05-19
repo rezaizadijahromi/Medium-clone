@@ -48,8 +48,11 @@ io.on("connection", (socket) => {
   });
 
   socket.on("newFollower", async ({ idUser, nameUser, idUserOwn }) => {
-    const { success, userId, userOwnId, username, error } =
-      await newFollowerRequest(idUser, nameUser, idUserOwn);
+    const { success, userId, userOwnId, username } = await newFollowerRequest(
+      idUser,
+      nameUser,
+      idUserOwn,
+    );
 
     if (success) {
       socket.emit("newRequest");
