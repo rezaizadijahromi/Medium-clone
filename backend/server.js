@@ -37,9 +37,6 @@ const defaultValue = "";
 io.use(function (socket, next) {
   if (socket.handshake.query && socket.handshake.query.token) {
     jwt.verify(socket.handshake.query.token, "reza", function (err, decoded) {
-      console.log(decoded);
-
-      socket.join(decoded.id);
       if (err) {
         console.log(err);
       }
@@ -64,10 +61,9 @@ io.use(function (socket, next) {
     );
 
     const userFind = await User.findById(userId);
-    socket.join(userFind._id);
 
     if (success) {
-      socket.to(userFind._id).emit("newRequestRecieve", {});
+      io.emit("newRequestRecieve", { userId });
     }
   });
 

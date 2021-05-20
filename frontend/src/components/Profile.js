@@ -176,6 +176,7 @@ const Profile = ({ location, history }) => {
   // end
 
   // add socket io logic for getting notification
+
   useEffect(() => {
     const token = userInfo.token;
 
@@ -184,8 +185,12 @@ const Profile = ({ location, history }) => {
     });
 
     if (socket) {
-      socket.on("newRequestRecieve", () => {
-        setShowToastr(true);
+      socket.on("newRequestRecieve", ({ userId }) => {
+        console.log(userId);
+        if (userId === userInfo._id) {
+          setShowToastr(true);
+        }
+
         console.log("reciving data");
       });
     }
