@@ -15,6 +15,8 @@ import { addUser, removeUser, getUser, getUsersInRoom } from "./users.js";
 import Article from "./models/articleModel.js";
 import Document from "./Document.js";
 import { newFollowerRequest } from "./utils/notificatoins.js";
+import User from "./models/usersModel.js";
+import jwt from "jsonwebtoken";
 
 dotenv.config();
 connectDB();
@@ -32,7 +34,43 @@ const io = new Server(server, {
 
 const defaultValue = "";
 
-io.on("connection", (socket) => {
+io.use(function (socket, next) {
+  if (socket.handshake.query && socket.handshake.query.token) {
+    jwt.verify(socket.handshake.query.token, "reza", function (err, decoded) {
+      console.log(decoded);
+
+      socket.join(decoded.id);
+      if (err) {
+        console.log(err);
+      }
+      socket.decoded = decoded;
+      next();
+    });
+  } else {
+    console.log("error");
+    next(new Error("Authentication error"));
+  }
+}).on("connection", (socket) => {
+  // socket.on("newRequestRecieve", async ({ userIdProfile }) => {
+  //   let userId = userIdProfile;
+  //   console.log("userIdnew", userId);
+  // });
+
+  socket.on("newFollower", async ({ idUser, nameUser, idUserOwn }) => {
+    let { success, userId, userOwnId, username } = await newFollowerRequest(
+      idUser,
+      nameUser,
+      idUserOwn,
+    );
+
+    const userFind = await User.findById(userId);
+    socket.join(userFind._id);
+
+    if (success) {
+      socket.to(userFind._id).emit("newRequestRecieve", {});
+    }
+  });
+
   socket.on("get-document", async (documentId) => {
     const document = await findOrCreateDocument(socket.id);
     socket.join(socket.id);
@@ -45,36 +83,6 @@ io.on("connection", (socket) => {
     socket.on("save-document", async (data) => {
       await Document.findByIdAndUpdate(socket.id, { data });
     });
-  });
-
-  socket.on("newFollower", async ({ idUser, nameUser, idUserOwn }) => {
-    console.log("idUser", idUser);
-    console.log("nameUser", nameUser);
-    console.log("idUserOwn", idUserOwn);
-    const { success, userId, userOwnId, username } = await newFollowerRequest(
-      idUser,
-      nameUser,
-      idUserOwn,
-    );
-
-    console.log("socket id", socket.id);
-    userId = userId.toString();
-    socket.join(userId);
-
-    if (success) {
-      socket.emit("newRequest");
-      console.log("here in emit to user");
-
-      // io.to(userId).emit("newRequestRecieve", {
-      //   userOwnId,
-      //   username,
-      // });
-      socket.to(userId).emit("newRequestRecieve", {
-        userOwnId,
-        username,
-      });
-      console.log("recive server");
-    }
   });
 });
 

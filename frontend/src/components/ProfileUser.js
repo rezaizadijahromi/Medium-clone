@@ -57,9 +57,11 @@ const ProfileUser = ({ location, history, match }) => {
 
   // start follow //
   useEffect(() => {
-    socket.current = io("http://localhost:5000");
-    console.log(socket.current);
-  });
+    const token = userInfo.token;
+    socket.current = io.connect("http://localhost:5000", {
+      query: { token },
+    });
+  }, []);
   // end follow //
 
   const userFollowRealTime = (e) => {
@@ -72,14 +74,16 @@ const ProfileUser = ({ location, history, match }) => {
         idUserOwn: userInfo._id,
       });
 
-      dispatch(followUser(match.params.id));
-      history.push(`/profile/${match.params.id}`);
+      // dispatch(followUser(match.params.id));
+      // history.push(`/profile/${match.params.id}`);
     }
   };
 
   //      Follow and UnFollow        //
-  const userFollowHandler = (userId) => {
+  const userFollowHandler = (e, userId) => {
     // dispatch({ type: USER_UPDATE_PROFILE_RESET });
+    e.preventDefault();
+
     dispatch(followUser(userId));
     history.push(`/profile/${match.params.id}`);
     // window.location.reload();
@@ -87,7 +91,8 @@ const ProfileUser = ({ location, history, match }) => {
   //          end follow and unfollow           //
 
   // Show the followers and followings //
-  const userProfileHandler = (userId) => {
+  const userProfileHandler = (e, userId) => {
+    e.preventDefault();
     if (userInfo._id === userId) {
       history.push("/profile");
       window.location.reload();

@@ -35,7 +35,6 @@ const Profile = ({ location, history }) => {
   const userProfile = useSelector((state) => state.userProfile);
   const { loading, error, user, articles } = userProfile;
   const { userInfo } = userLogin;
-  console.log(articles);
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -55,7 +54,6 @@ const Profile = ({ location, history }) => {
   const userNotif = useSelector((state) => state.userNotif);
   const { loading: loadingNotif, error: errorNotif, notifications } = userNotif;
 
-  console.log(notifications);
   // end
 
   // add toastify and socket
@@ -153,7 +151,6 @@ const Profile = ({ location, history }) => {
     history.push(`/article/${articleId}`);
   };
   // end
-  console.log(articles);
 
   // Add article
   const addArticleHandler = (e) => {
@@ -180,12 +177,13 @@ const Profile = ({ location, history }) => {
 
   // add socket io logic for getting notification
   useEffect(() => {
-    socket = io("http://localhost:5000");
+    const token = userInfo.token;
 
-    console.log(socket);
+    socket = io.connect("http://localhost:5000", {
+      query: { token },
+    });
 
     if (socket) {
-      console.log("here");
       socket.on("newRequestRecieve", () => {
         setShowToastr(true);
         console.log("reciving data");
