@@ -6,10 +6,14 @@ import Message from "../components/Message";
 import Loader from "../components/Loader";
 import FormContainer from "./FormContainer";
 import { login } from "../actions/userActions";
+import { GoogleLogin } from "react-google-login";
+import Icon from "./icon";
+import useStyles from "./styles";
 
 const Login = ({ location, history }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const classes = useStyles();
 
   const dispatch = useDispatch();
 
@@ -27,6 +31,19 @@ const Login = ({ location, history }) => {
   const submitHandler = (e) => {
     e.preventDefault();
     dispatch(login(email, password));
+  };
+
+  const googleSuccess = async (res) => {
+    console.log(res);
+    const result = res?.profileObj;
+    const token = res?.tokenId;
+
+    console.log(result.email);
+    console.log(token);
+  };
+
+  const googleError = async (err) => {
+    console.log(err);
   };
 
   return (
@@ -52,10 +69,31 @@ const Login = ({ location, history }) => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}></Form.Control>
         </Form.Group>
+        <div>
+          <Button type="submit" variant="primary">
+            Sign In
+          </Button>
+        </div>
 
-        <Button type="submit" variant="primary">
-          Sign In
-        </Button>
+        <div>
+          <GoogleLogin
+            clientId="1005272224546-roddt620t2agtklv6llukg4ku484a486.apps.googleusercontent.com"
+            render={(renderProps) => (
+              <Button
+                className={classes.googleButton}
+                color="secondery"
+                fullWidth
+                onClick={renderProps.onClick}
+                disabled={renderProps.disabled}
+                startIcon={<Icon />}
+                variant="primary">
+                Google Sign In
+              </Button>
+            )}
+            onSuccess={googleSuccess}
+            onFailure={googleError}
+          />
+        </div>
       </Form>
 
       <Row className="py-3">

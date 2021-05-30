@@ -23,6 +23,11 @@ const Header = () => {
           <LinkContainer to="/">
             <Navbar.Brand>Medium Clone</Navbar.Brand>
           </LinkContainer>
+          {/* 
+          <a href="http://localhost:5000/auth/google">
+            <Navbar.Brand>Auth test</Navbar.Brand>
+          </a> */}
+
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Route render={({ history }) => <SearchBox history={history} />} />

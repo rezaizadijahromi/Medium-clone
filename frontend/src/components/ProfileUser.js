@@ -74,8 +74,8 @@ const ProfileUser = ({ location, history, match }) => {
         idUserOwn: userInfo._id,
       });
 
-      // dispatch(followUser(match.params.id));
-      // history.push(`/profile/${match.params.id}`);
+      dispatch(followUser(match.params.id));
+      history.push(`/profile/${match.params.id}`);
     }
   };
 
