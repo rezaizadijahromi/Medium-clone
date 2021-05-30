@@ -1,6 +1,8 @@
 import multipart from "connect-multiparty";
 const multipartWare = multipart();
 import express from "express";
+import passport from "passport";
+
 import {
   registerUser,
   loginUser,
@@ -12,9 +14,14 @@ import {
   acceptNotificationsHandler,
   getAllNotificationsHandler,
   delNotificationsHandler,
+  // googleAuth,
+  // googleAuthCallBack,
 } from "../controllers/userControllers.js";
 import { protect, admin } from "../middlewares/authMiddleWare.js";
 const router = express.Router();
+
+// router.route("/auth/google").get(googleAuth);
+// router.route("/auth/google/callback").get(googleAuthCallBack);
 
 router.route("/notif").get(protect, getAllNotificationsHandler);
 router

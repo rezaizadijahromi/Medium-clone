@@ -3,6 +3,7 @@ import path from "path";
 import articleRoutes from "./routes/articleRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import uploadRoutes from "./routes/uploadRoutes.js";
+import authRoutes from "./routes/authRoutes.js";
 import connectDB from "./config/db.js";
 import dotenv from "dotenv";
 import { notFound, errorHandler } from "./middlewares/errorMiddleWare.js";
@@ -17,9 +18,12 @@ import Document from "./Document.js";
 import { newFollowerRequest } from "./utils/notificatoins.js";
 import User from "./models/usersModel.js";
 import jwt from "jsonwebtoken";
+import passport from "passport";
+import googleAuth from "./config/passport.js";
 
 dotenv.config();
 connectDB();
+googleAuth(passport);
 
 const app = express();
 app.use(express.json());
@@ -93,9 +97,13 @@ app.set("socketio", io);
 app.use(cors());
 app.use(router);
 
+app.use(passport.initialize());
+
 app.use("/api/articles", articleRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/upload", uploadRoutes);
+
+app.use("/", authRoutes);
 
 const __dirname = path.resolve();
 app.use("/uploads", express.static(path.join(__dirname, "/uploads")));

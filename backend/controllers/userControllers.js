@@ -3,6 +3,22 @@ import Article from "../models/articleModel.js";
 import User from "../models/usersModel.js";
 import bcrypt from "bcryptjs";
 import { generateToken, generateConfirmation } from "../utils/generateToken.js";
+import passport from "passport";
+
+// const googleAuth = asyncHandler(async (req, res) => {
+//   console.log("here");
+//   passport.authenticate("google", { scope: ["profile", "email"] });
+
+//   res.send("here auth");
+// });
+
+// const googleAuthCallBack = asyncHandler(async (req, res) => {
+//   console.log("here 2");
+//   passport.authenticate("google", { failureRedirect: "/", session: false });
+
+//   var token = req.user.token;
+//   res.redirect("http://localhost:3000?token=" + token);
+// });
 
 // @desc Register a new user
 // @route POST /api/users
@@ -391,6 +407,8 @@ export {
   acceptNotificationsHandler,
   getAllNotificationsHandler,
   delNotificationsHandler,
+  // googleAuth,
+  // googleAuthCallBack,
 };
 
 //  else {

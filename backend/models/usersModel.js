@@ -57,6 +57,7 @@ let UserSchema = new mongoose.Schema({
     default: "Private",
   },
   notifications: [],
+  googleId: String,
 
   followers: [FollowersSchema],
   following: [FollowingSchema],
