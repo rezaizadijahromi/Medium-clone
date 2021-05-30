@@ -38,8 +38,8 @@ const Login = ({ location, history }) => {
     const result = res?.profileObj;
     const token = res?.tokenId;
 
-    console.log(result.email);
-    console.log(token);
+    // dispatch(login(result.email));
+    console.log(res);
   };
 
   const googleError = async (err) => {
@@ -82,10 +82,8 @@ const Login = ({ location, history }) => {
               <Button
                 className={classes.googleButton}
                 color="secondery"
-                fullWidth
                 onClick={renderProps.onClick}
                 disabled={renderProps.disabled}
-                startIcon={<Icon />}
                 variant="primary">
                 Google Sign In
               </Button>
