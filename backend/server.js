@@ -97,13 +97,13 @@ app.set("socketio", io);
 app.use(cors());
 app.use(router);
 
-app.use(passport.initialize());
+// app.use(passport.initialize());
 
 app.use("/api/articles", articleRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/upload", uploadRoutes);
 
-app.use("/", authRoutes);
+// app.use("/", authRoutes);
 
 const __dirname = path.resolve();
 app.use("/uploads", express.static(path.join(__dirname, "/uploads")));
