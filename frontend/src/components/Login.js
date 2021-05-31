@@ -9,8 +9,18 @@ import { login } from "../actions/userActions";
 import { GoogleLogin } from "react-google-login";
 import Icon from "./icon";
 import useStyles from "./styles";
+import axios from "axios";
+
+const initialState = {
+  firstName: "",
+  lastName: "",
+  email: "",
+  password: "",
+  confirmPassword: "",
+};
 
 const Login = ({ location, history }) => {
+  const [form, setForm] = useState(initialState);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const classes = useStyles();
@@ -34,12 +44,17 @@ const Login = ({ location, history }) => {
   };
 
   const googleSuccess = async (res) => {
-    console.log(res);
-    const result = res?.profileObj;
+    const email = res?.profileObj.email;
     const token = res?.tokenId;
 
-    // dispatch(login(result.email));
-    console.log(res);
+    const data = await axios.post("api/users/googlelogin", {
+      email,
+      idToken: token,
+    });
+
+    localStorage.setItem("userInfo", JSON.stringify(data.data));
+
+    history.push("/");
   };
 
   const googleError = async (err) => {

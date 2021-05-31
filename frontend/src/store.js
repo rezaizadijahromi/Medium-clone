@@ -25,6 +25,7 @@ import {
   userNotifReducer,
   userAcceptNotifReducer,
   userDenieNotifReducer,
+  authReducer,
 } from "./reducers/userReducer";
 
 const reducer = combineReducers({

@@ -56,6 +56,7 @@ export const userLoginReducer = (state = {}, action) => {
       return state;
   }
 };
+
 export const userProfileReducer = (
   state = {
     user: { followers: [], following: [], notifications: [] },
