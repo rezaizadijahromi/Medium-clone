@@ -75,7 +75,7 @@ const getAllArticles = asyncHandler(async (req, res) => {
     res.status(404);
     throw new Error("No article found");
   }
-  res.json({ article });
+  // res.json({ article });
 });
 
 const getArticleById = asyncHandler(async (req, res) => {

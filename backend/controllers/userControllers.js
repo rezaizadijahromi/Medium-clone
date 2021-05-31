@@ -4,6 +4,7 @@ import User from "../models/usersModel.js";
 import bcrypt from "bcryptjs";
 import { generateToken, generateConfirmation } from "../utils/generateToken.js";
 import passport from "passport";
+import { OAuth2Client } from "google-auth-library";
 
 // const googleAuth = asyncHandler(async (req, res) => {
 //   console.log("here");
@@ -26,6 +27,7 @@ import passport from "passport";
 
 const registerUser = asyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
+
   const alreadyExists = await User.findOne({ email });
 
   if (alreadyExists) {
@@ -60,18 +62,8 @@ const registerUser = asyncHandler(async (req, res) => {
 const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
-  console.log(user);
-  if (user.googleId) {
-    res.json({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      isAdmin: user.isAdmin,
-      following: user.following,
-      followers: user.followers,
-      token: generateToken(user._id),
-    });
-  } else if (user && (await bcrypt.compare(password, user.password))) {
+
+  if (user && (await bcrypt.compare(password, user.password))) {
     res.json({
       _id: user._id,
       name: user.name,
@@ -86,6 +78,43 @@ const loginUser = asyncHandler(async (req, res) => {
     throw new Error("Invalid email or password");
   }
 });
+
+// @desc Login in get token
+// @route POST /api/users/googlelogin
+// @access Public
+
+const client = new OAuth2Client(
+  "1005272224546-roddt620t2agtklv6llukg4ku484a486.apps.googleusercontent.com",
+);
+
+const googleLogin = async (req, res) => {
+  const { idToken, email } = req.body;
+  try {
+    console.log(email);
+    const ver = await client.verifyIdToken({
+      idToken,
+      audience:
+        "1005272224546-roddt620t2agtklv6llukg4ku484a486.apps.googleusercontent.com",
+    });
+    console.log(ver);
+
+    const user = await User.findOne({ email });
+
+    if (user) {
+      res.json({
+        _id: user._id,
+        email: user.email,
+        name: user.name,
+        token: generateToken(user._id),
+      });
+    } else {
+      res.status(404);
+      throw new Error("User not found");
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 // @desc Get users id for going into their profile
 // @route /api/users/profile/:id
@@ -417,6 +446,7 @@ export {
   acceptNotificationsHandler,
   getAllNotificationsHandler,
   delNotificationsHandler,
+  googleLogin,
   // googleAuth,
   // googleAuthCallBack,
 };

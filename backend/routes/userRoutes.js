@@ -14,6 +14,7 @@ import {
   acceptNotificationsHandler,
   getAllNotificationsHandler,
   delNotificationsHandler,
+  googleLogin,
   // googleAuth,
   // googleAuthCallBack,
 } from "../controllers/userControllers.js";
@@ -22,6 +23,8 @@ const router = express.Router();
 
 // router.route("/auth/google").get(googleAuth);
 // router.route("/auth/google/callback").get(googleAuthCallBack);
+
+router.route("/googlelogin").post(googleLogin);
 
 router.route("/notif").get(protect, getAllNotificationsHandler);
 router
